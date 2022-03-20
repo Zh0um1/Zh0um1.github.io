@@ -455,11 +455,11 @@
 <li>执行系统命令</li>
 </ol>
 <h2 id="编写-CLR"><a href="#编写-CLR" class="headerlink" title="编写 CLR"></a>编写 CLR</h2><p>使用 Visual Studio 创建工程</p>
-<p><img src="/MSSQL-%E4%B8%80%E8%88%AC%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F/image-20220320205141716.png" alt="image-20220320205141716"></p>
+<p><img src="/posts/5beaca16/image-20220320205141716.png" alt="image-20220320205141716"></p>
 <p>修改目标平台和勾选创建脚本，这里是 SQL Server 2014</p>
-<p><img src="/MSSQL-%E4%B8%80%E8%88%AC%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F/image-20220320205354905.png" alt="image-20220320205354905"></p>
+<p><img src="/posts/5beaca16/image-20220320205354905.png" alt="image-20220320205354905"></p>
 <p>修改目标框架和权限级别为 UNSAFE</p>
-<p><img src="/MSSQL-%E4%B8%80%E8%88%AC%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F/image-20220320205406216.png" alt="image-20220320205406216"></p>
+<p><img src="/posts/5beaca16/image-20220320205406216.png" alt="image-20220320205406216"></p>
 <blockquote>
 <p>在 SQL Server 2005 中引入了从 MSSQL 运行.NET 代码的功能，并在后续版本中叠加了许多保护措施，来限制代码可以访问的内容。在创建.Net 程序集时，会给它们指定一个权限级别<br>其权限集有三个选项</p>
 <blockquote>
@@ -467,7 +467,7 @@
 </blockquote>
 </blockquote>
 <p>创建 SQL CLR C# 存储过程</p>
-<p><img src="/MSSQL-%E4%B8%80%E8%88%AC%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F/image-20220320205413749.png" alt="image-20220320205413749"></p>
+<p><img src="/posts/5beaca16/image-20220320205413749.png" alt="image-20220320205413749"></p>
 <p>代码如下</p>
 <pre class="language-c#" data-language="c#"><code class="language-c#">using System;
 using System.Data;
@@ -542,7 +542,7 @@ public partial class StoredProcedures
 &#125;</code></pre>
 
 <p>编译生成 DLL</p>
-<p><img src="/MSSQL-%E4%B8%80%E8%88%AC%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F/image-20220320205430338.png" alt="image-20220320205430338"></p>
+<p><img src="/posts/5beaca16/image-20220320205430338.png" alt="image-20220320205430338"></p>
 <h2 id="启用-CLR"><a href="#启用-CLR" class="headerlink" title="启用 CLR"></a>启用 CLR</h2><h3 id="SQL-Server-2017-版本之前"><a href="#SQL-Server-2017-版本之前" class="headerlink" title="SQL Server 2017 版本之前"></a>SQL Server 2017 版本之前</h3><pre class="language-sql" data-language="sql"><code class="language-sql">sp_configure <span class="token string">'show advanced options'</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">;</span><span class="token keyword">RECONFIGURE</span><span class="token punctuation">;</span> <span class="token comment">-- 显示高级选项</span>
 sp_configure <span class="token string">'clr enabled'</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">;</span><span class="token keyword">RECONFIGURE</span><span class="token punctuation">;</span> <span class="token comment">-- 启用CLR</span>
 <span class="token keyword">ALTER</span> <span class="token keyword">DATABASE</span> master <span class="token keyword">SET</span> TRUSTWORTHY <span class="token keyword">ON</span><span class="token punctuation">;</span> <span class="token comment">-- 将存储.Net程序集的数据库配置为可信赖的</span></code></pre>
@@ -638,7 +638,7 @@ GO</code></pre>
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://Zh0um1.github.io/posts/5beaca16.html">http://Zh0um1.github.io/posts/5beaca16.html</a>
+                    <a href="http://Zh0um1.github.io/posts/5beaca16">http://Zh0um1.github.io/posts/5beaca16</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -730,7 +730,7 @@ GO</code></pre>
                 <i class="far fa-dot-circle"></i>&nbsp;本篇
             </div>
             <div class="card">
-                <a href="/posts/5beaca16.html">
+                <a href="/posts/5beaca16">
                     <div class="card-image">
                         
                         
@@ -776,7 +776,7 @@ GO</code></pre>
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/posts/1385ebc.html">
+                <a href="/posts/1385ebc">
                     <div class="card-image">
                         
                         
