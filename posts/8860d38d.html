@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="" />
+  <meta name="author" content="Zh0um1" />
+  <meta name="description" content="摆烂仔的摆烂记录" />
+  
+  
+  <title>
+    
+      Spring MVC 视图解析流程 
+      
+      
+      |
+    
+     Zh0um1&#39;s Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/f.png">
+    <link rel="icon" href="/images/f.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/a.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Zh0um1</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Spring MVC 视图解析流程</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2022-01-01 21:00:20
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/java/" title="java">
+                    #java
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h1 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h1><p>这里直接使用 Spring Boot 和 Thymeleaf 快速搭建一个环境</p>
+<p>编写 Controller</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Controller</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">UrlController</span> <span class="token punctuation">&#123;</span>
+
+    <span class="token annotation punctuation">@GetMapping</span><span class="token punctuation">(</span>value <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"/"</span><span class="token punctuation">,</span> <span class="token string">"index"</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">indexController</span><span class="token punctuation">(</span><span class="token class-name">Model</span> model<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        model<span class="token punctuation">.</span><span class="token function">addAttribute</span><span class="token punctuation">(</span><span class="token string">"name"</span><span class="token punctuation">,</span> <span class="token string">"Zh0um1"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token string">"index"</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>在 <code>resource/templates</code> 目录下创建 <code>index.html</code> 作为模板</p>
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token doctype"><span class="token punctuation">&lt;!</span><span class="token doctype-tag">DOCTYPE</span> <span class="token name">html</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>en<span class="token punctuation">"</span></span> <span class="token attr-name"><span class="token namespace">xmlns:</span>th</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>http://www.thymeleaf.org<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">charset</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>UTF-8<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">></span></span>Index Page<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">></span></span>Hello Thymeleaf<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name"><span class="token namespace">th:</span>text</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>$&#123;name&#125;<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">></span></span></code></pre>
+
+<p>页面效果</p>
+<p><img src="/posts/8860d38d/Pasted-image-20220918211121.png" alt="Pasted-image-20220918211121.png"></p>
+<h1 id="视图解析过程分析"><a href="#视图解析过程分析" class="headerlink" title="视图解析过程分析"></a>视图解析过程分析</h1><p>我们知道 Spring Boot 的请求会经过 <code>DispatcherServlet#doDispatch</code> 被分发到对应的 Handler 中进行处理，所以直接在这个方法中下断点进行分析</p>
+<h2 id="封装-ModelAndView"><a href="#封装-ModelAndView" class="headerlink" title="封装 ModelAndView"></a>封装 ModelAndView</h2><p>在获取到对应的 handler 后通过 <code>ha.handle</code> 方法得到了 ModeAndView 对象</p>
+<p><img src="/posts/8860d38d/Pasted-image-20220918214704.png" alt="Pasted-image-20220918214704.png"></p>
+<p>一路跟进该方法直到 <code>RequestMappingHandlerAdapter#handleInternal</code> 方法中，可以看到 ModelAndView 对象是通过 <code>invokeHandlerMethod</code> 方法获取到的</p>
+<p><img src="/posts/8860d38d/Pasted-image-20220918215303.png" alt="Pasted-image-20220918215303.png"></p>
+<p>一路跟进到 <code>ServletInvocableHandlerMethod#invokeAndHandle</code> 方法中</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">invokeAndHandle</span><span class="token punctuation">(</span><span class="token class-name">ServletWebRequest</span> webRequest<span class="token punctuation">,</span> <span class="token class-name">ModelAndViewContainer</span> mavContainer<span class="token punctuation">,</span>
+        <span class="token class-name">Object</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> providedArgs<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+
+    <span class="token class-name">Object</span> returnValue <span class="token operator">=</span> <span class="token function">invokeForRequest</span><span class="token punctuation">(</span>webRequest<span class="token punctuation">,</span> mavContainer<span class="token punctuation">,</span> providedArgs<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">setResponseStatus</span><span class="token punctuation">(</span>webRequest<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>returnValue <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">isRequestNotModified</span><span class="token punctuation">(</span>webRequest<span class="token punctuation">)</span> <span class="token operator">||</span> <span class="token function">getResponseStatus</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!=</span> <span class="token keyword">null</span> <span class="token operator">||</span> mavContainer<span class="token punctuation">.</span><span class="token function">isRequestHandled</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            <span class="token function">disableContentCachingIfNecessary</span><span class="token punctuation">(</span>webRequest<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            mavContainer<span class="token punctuation">.</span><span class="token function">setRequestHandled</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">return</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token class-name">StringUtils</span><span class="token punctuation">.</span><span class="token function">hasText</span><span class="token punctuation">(</span><span class="token function">getResponseStatusReason</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        mavContainer<span class="token punctuation">.</span><span class="token function">setRequestHandled</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    mavContainer<span class="token punctuation">.</span><span class="token function">setRequestHandled</span><span class="token punctuation">(</span><span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token class-name">Assert</span><span class="token punctuation">.</span><span class="token function">state</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>returnValueHandlers <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token string">"No return value handlers"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>returnValueHandlers<span class="token punctuation">.</span><span class="token function">handleReturnValue</span><span class="token punctuation">(</span>
+                returnValue<span class="token punctuation">,</span> <span class="token function">getReturnValueType</span><span class="token punctuation">(</span>returnValue<span class="token punctuation">)</span><span class="token punctuation">,</span> mavContainer<span class="token punctuation">,</span> webRequest<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> ex<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>logger<span class="token punctuation">.</span><span class="token function">isTraceEnabled</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            logger<span class="token punctuation">.</span><span class="token function">trace</span><span class="token punctuation">(</span><span class="token function">formatErrorForReturnValue</span><span class="token punctuation">(</span>returnValue<span class="token punctuation">)</span><span class="token punctuation">,</span> ex<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+        <span class="token keyword">throw</span> ex<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>通过 <code>InvocableHandlerMethod#invokeForRequest</code> 方法获取到请求的返回值</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Nullable</span>
+<span class="token keyword">public</span> <span class="token class-name">Object</span> <span class="token function">invokeForRequest</span><span class="token punctuation">(</span><span class="token class-name">NativeWebRequest</span> request<span class="token punctuation">,</span> <span class="token annotation punctuation">@Nullable</span> <span class="token class-name">ModelAndViewContainer</span> mavContainer<span class="token punctuation">,</span>
+        <span class="token class-name">Object</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> providedArgs<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+
+    <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args <span class="token operator">=</span> <span class="token function">getMethodArgumentValues</span><span class="token punctuation">(</span>request<span class="token punctuation">,</span> mavContainer<span class="token punctuation">,</span> providedArgs<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>logger<span class="token punctuation">.</span><span class="token function">isTraceEnabled</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        logger<span class="token punctuation">.</span><span class="token function">trace</span><span class="token punctuation">(</span><span class="token string">"Arguments: "</span> <span class="token operator">+</span> <span class="token class-name">Arrays</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span>args<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token keyword">return</span> <span class="token function">doInvoke</span><span class="token punctuation">(</span>args<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>通过 <code>doInvoke</code> 方法反射调用对应的 Controller，获取到方法的返回值 <code>returnValue</code></p>
+<p>值得一提的是这里的 <code>InvocableHandlerMethod</code> 对象示例是在 <code>doDispatch</code> 方法中获取到的 handler 对象的的包装类<del>（应该是这么叫的吧）</del>，也就是有些文章说的<strong>通过 invokeForRequest 函数，根据用户提供的 url，调用相关的 Controller</strong></p>
+<p>随后根据 <code>returnValue</code> 是否为 null 来寻找视图，也就是模板文件，这里返回了 <code>index</code>，所以会通过 <code>handleReturnValue</code> 方法来寻找视图</p>
+<p><img src="/posts/8860d38d/Pasted-image-20220918235304.png" alt="Pasted-image-20220918235304.png"></p>
+<p>在 <code>handleReturnValue</code> 中，通过 <code>selectHandler</code> 方法遍历所有的 <code>returnValueHandlers</code> 来获取合适的 handler</p>
+<p><img src="/posts/8860d38d/Pasted-image-20220918235929.png" alt="Pasted-image-20220918235929.png"></p>
+<p>随后在 <code>handler.handleReturnValue()</code> 根据返回值来确定视图名称</p>
+<p><img src="/posts/8860d38d/Pasted-image-20220919000450.png" alt="Pasted-image-20220919000450.png"></p>
+<p><code>invokeAndHandle</code> 方法完成后来到 <code>RequestMappingHandlerAdapter#getModelAndView</code> 方法中</p>
+<p><img src="/posts/8860d38d/Pasted-image-20220919001831.png" alt="Pasted-image-20220919001831.png"></p>
+<p>从 <code>mavContainer</code> 对象中取出视图名称和数据封装成 <code>ModelAndView</code> 对象返回出去，自此就完成了 <code>ModelAndView</code> 的封装</p>
+<p>简单概括一下就是通过 url 匹配到对应的 Controller，反射调用 Controller 获得返回值，根据返回值类型寻找合适的视图名称，最后把视图名称和数据封装成 ModelAndView 对象</p>
+<h2 id="获取视图"><a href="#获取视图" class="headerlink" title="获取视图"></a>获取视图</h2><p>拿到 ModelAndView 对象进入 <code>DispatcherServlet#processDispatchResult</code> 方法</p>
+<p><img src="/posts/8860d38d/Pasted-image-20220920103933.png" alt="Pasted-image-20220920103933.png"></p>
+<p>在 <code>DispatcherServlet#render</code> 方法中获取到视图解析器并完成最后的渲染</p>
+<p>可以看到当 ModelAndView 对象中的视图名称不为 null 时，通过 <code>DispatcherServlet#resolveViewName</code> 方法获取视图解析器</p>
+<p><img src="/posts/8860d38d/Pasted-image-20220920104200.png" alt="Pasted-image-20220920104200.png"></p>
+<p>获取视图的逻辑很简单，就是通过遍历所有的视图解析器，通过 <code>resolveViewName</code> 方法来解析视图名称对应的视图，解析成功就返回该视图</p>
+<p><img src="/posts/8860d38d/Pasted-image-20220920104848.png" alt="Pasted-image-20220920104848.png"></p>
+<p>这里获取到的 <code>ThymeleafView</code> 视图是从 <code>ContentNegotiatingViewResolver</code> 中返回的，而不是 <code>ThymeleafViewResolver</code>，可以跟进 <code>ContentNegotiatingViewResolver#resolveViewName</code> 看看具体实现</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token class-name">View</span> <span class="token function">resolveViewName</span><span class="token punctuation">(</span><span class="token class-name">String</span> viewName<span class="token punctuation">,</span> <span class="token class-name">Locale</span> locale<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+    <span class="token class-name">RequestAttributes</span> attrs <span class="token operator">=</span> <span class="token class-name">RequestContextHolder</span><span class="token punctuation">.</span><span class="token function">getRequestAttributes</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token class-name">Assert</span><span class="token punctuation">.</span><span class="token function">state</span><span class="token punctuation">(</span>attrs <span class="token keyword">instanceof</span> <span class="token class-name">ServletRequestAttributes</span><span class="token punctuation">,</span> <span class="token string">"No current ServletRequestAttributes"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">MediaType</span><span class="token punctuation">></span></span> requestedMediaTypes <span class="token operator">=</span> <span class="token function">getMediaTypes</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token class-name">ServletRequestAttributes</span><span class="token punctuation">)</span> attrs<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getRequest</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>requestedMediaTypes <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">View</span><span class="token punctuation">></span></span> candidateViews <span class="token operator">=</span> <span class="token function">getCandidateViews</span><span class="token punctuation">(</span>viewName<span class="token punctuation">,</span> locale<span class="token punctuation">,</span> requestedMediaTypes<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">View</span> bestView <span class="token operator">=</span> <span class="token function">getBestView</span><span class="token punctuation">(</span>candidateViews<span class="token punctuation">,</span> requestedMediaTypes<span class="token punctuation">,</span> attrs<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>bestView <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            <span class="token keyword">return</span> bestView<span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span></code></pre>
+
+<p>这里主要就是两个方法 <code>getCandidateViews</code> 和 <code>getBestView</code></p>
+<p>在 <code>getCandidateViews</code> 方法中，遍历所有的 <code>ViewResolver</code>，将解析成功的视图放到视图候选列表中</p>
+<p><img src="/posts/8860d38d/Pasted-image-20220920105926.png" alt="Pasted-image-20220920105926.png"></p>
+<p>然后通过 <code>getBestView</code> 方法从候选列表中拿到最适配的视图，该方法会优先匹配存在重定向操作的视图，如果不存在重定向操作的视图则根据请求头中的 <code>Accept</code> 字段的值与 <code>candidateViews</code> 的相关顺序，并判断是否兼容来返回最适配的 <code>View</code></p>
+<p><img src="/posts/8860d38d/Pasted-image-20220920110323.png" alt="Pasted-image-20220920110323.png"></p>
+<h2 id="渲染视图"><a href="#渲染视图" class="headerlink" title="渲染视图"></a>渲染视图</h2><p>在 <code>DispatcherServlet#render</code> 中获取到视图后会调用视图对应的 <code>render</code> 方法</p>
+<p>这里会调用 <code>ThymeleafView#render</code> 方法，最终会调用到 <code>ThymeleafView#renderFragment</code> 方法</p>
+<p>在 <code>renderFragment</code> 方法中会将之前获得的视图名称作为模板名，获取到模板渲染引擎后，解析模板中的表达式，最后返回到浏览器中</p>
+<p>关键代码如下</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">final</span> <span class="token class-name">String</span> viewTemplateName <span class="token operator">=</span> <span class="token function">getTemplateName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">final</span> <span class="token class-name">ISpringTemplateEngine</span> viewTemplateEngine <span class="token operator">=</span> <span class="token function">getTemplateEngine</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">final</span> <span class="token class-name">IStandardExpressionParser</span> parser <span class="token operator">=</span> <span class="token class-name">StandardExpressions</span><span class="token punctuation">.</span><span class="token function">getExpressionParser</span><span class="token punctuation">(</span>configuration<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">final</span> <span class="token class-name">FragmentExpression</span> fragmentExpression<span class="token punctuation">;</span>
+<span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// By parsing it as a standard expression, we might profit from the expression cache</span>
+    fragmentExpression <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">FragmentExpression</span><span class="token punctuation">)</span> parser<span class="token punctuation">.</span><span class="token function">parseExpression</span><span class="token punctuation">(</span>context<span class="token punctuation">,</span> <span class="token string">"~&#123;"</span> <span class="token operator">+</span> viewTemplateName <span class="token operator">+</span> <span class="token string">"&#125;"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token keyword">final</span> <span class="token class-name">TemplateProcessingException</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">IllegalArgumentException</span><span class="token punctuation">(</span><span class="token string">"Invalid template name specification: '"</span> <span class="token operator">+</span> viewTemplateName <span class="token operator">+</span> <span class="token string">"'"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/c5577d2" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2022-01-01 21:00:20
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/java/" title="java">
+                        #java
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/posts/1385ebc" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="toc-text">环境配置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A7%86%E5%9B%BE%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">视图解析过程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%81%E8%A3%85-ModelAndView"><span class="toc-text">封装 ModelAndView</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E8%A7%86%E5%9B%BE"><span class="toc-text">获取视图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B8%B2%E6%9F%93%E8%A7%86%E5%9B%BE"><span class="toc-text">渲染视图</span></a></li></ol></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/Zh0um1">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2022 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Spring%20MVC%20%E8%A7%86%E5%9B%BE%E8%A7%A3%E6%9E%90%E6%B5%81%E7%A8%8B + '&url=' + http%3A%2F%2Fzh0um1.github.io%2Fposts%2F8860d38d + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://zh0um1.github.io/posts/8860d38d" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
